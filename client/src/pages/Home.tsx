@@ -36,27 +36,40 @@ export default function Home() {
       Math.pow((leftShoulder.y - rightShoulder.y) * videoHeight, 2)
     );
 
-    let size = "M";
-    let confidence = 0;
+    // 1. Calculate base size from normalized shoulder width
     const normShoulderWidth = shoulderWidthPx / videoWidth;
     
-    if (normShoulderWidth < 0.22) {
+    // Adjusted thresholds: 
+    // < 0.20: S
+    // 0.20 - 0.30: M
+    // 0.30 - 0.40: L
+    // > 0.40: XL
+    let size = "M";
+    let targetWidth = 0.25; // center of M range
+    
+    if (normShoulderWidth < 0.20) {
       size = "S";
-      confidence = Math.min(95, 70 + (0.22 - normShoulderWidth) * 100);
-    } else if (normShoulderWidth < 0.32) {
+      targetWidth = 0.15;
+    } else if (normShoulderWidth < 0.30) {
       size = "M";
-      confidence = Math.min(98, 80 + (0.32 - normShoulderWidth) * 50);
-    } else if (normShoulderWidth < 0.42) {
+      targetWidth = 0.25;
+    } else if (normShoulderWidth < 0.40) {
       size = "L";
-      confidence = Math.min(96, 75 + (0.42 - normShoulderWidth) * 40);
+      targetWidth = 0.35;
     } else {
       size = "XL";
-      confidence = Math.min(92, 60 + (normShoulderWidth - 0.42) * 30);
+      targetWidth = 0.45;
     }
+
+    // 2. Calculate confidence based on proximity to the camera
+    // Optimal detection happens when shoulders occupy a healthy 15-40% of the screen
+    // If the person is too close (XL/Large) or too far (Small), confidence naturally drops
+    const distanceScore = Math.max(0, 1 - Math.abs(normShoulderWidth - 0.25) * 2);
+    let confidence = 70 + (distanceScore * 25);
 
     return {
       size,
-      confidence: Math.round(confidence),
+      confidence: Math.round(Math.min(99, confidence)),
       label: size === "M" ? "Perfect Fit" : "Suggested"
     };
   }, []);
