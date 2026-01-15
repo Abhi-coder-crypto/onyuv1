@@ -139,7 +139,8 @@ export default function Home() {
         const isSideView = shoulderDistance < sideViewThreshold && !isFacingAway && (Math.abs(leftShoulder.z - rightShoulder.z) > 0.1);
         
         if (isSideView) {
-          detectedView = leftShoulder.z < rightShoulder.z ? "left" : "right"; // Swap left/right for mirrored view
+          // Correctly map side views: In mirrored view, if left shoulder is closer (smaller z), it's the right side of the body
+          detectedView = leftShoulder.z < rightShoulder.z ? "right" : "left"; 
           const bodyHeightPx = Math.abs(leftHip.y - leftShoulder.y) * videoHeight;
           const stableSideWidthPx = bodyHeightPx * 0.8;
           const drawWidth = stableSideWidthPx * 1.6;
@@ -147,6 +148,16 @@ export default function Home() {
           centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (sideDrawHeight * 0.25);
         } else if (isFacingAway) {
           detectedView = "back";
+          // Increase nose/face check sensitivity for back view to prevent flickering
+          const faceVisibilityThreshold = 0.15;
+          const isFaceVisibleStrict = (nose.visibility || 0) > faceVisibilityThreshold || 
+                                     (leftEye.visibility || 0) > faceVisibilityThreshold || 
+                                     (rightEye.visibility || 0) > faceVisibilityThreshold;
+          
+          if (isFaceVisibleStrict && !isHeadBehindShoulders) {
+            detectedView = "front";
+          }
+          
           const shoulderWidthPx = Math.abs(leftShoulder.x - rightShoulder.x) * videoWidth;
           const drawWidth = shoulderWidthPx * 2.2;
           const drawHeight = drawWidth * (shirtImages.back?.height / shirtImages.back?.width || 1);
