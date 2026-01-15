@@ -7,26 +7,35 @@ import { useLocation } from "wouter";
 import { ArrowLeft, Camera as CameraIcon, X, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const TSHIRT_VIEWS = {
-  front: "/tshirt-front.png",
-  back: "/tshirt-back.png",
-  left: "/tshirt-left.png",
-  right: "/tshirt-right.png",
+const TSHIRT_TYPES = {
+  standard: {
+    front: "/tshirt-front.png",
+    back: "/tshirt-back.png",
+    left: "/tshirt-left.png",
+    right: "/tshirt-right.png",
+  },
+  fullsleeve: {
+    front: "/fullsleeve-front.png",
+    back: "/fullsleeve-front.png", // Using front for back as well if back is missing
+    left: "/tshirt-left.png",
+    right: "/tshirt-right.png",
+  }
 };
 
 export default function Home() {
   const [, setLocation] = useLocation();
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isCameraActive, setIsCameraActive] = useState(true); // Default to active for seamless entry
+  const [isCameraActive, setIsCameraActive] = useState(true);
+  const [shirtType, setShirtType] = useState<keyof typeof TSHIRT_TYPES>("standard");
   const [shirtImages, setShirtImages] = useState<Record<string, HTMLImageElement>>({});
-  const [view, setView] = useState<keyof typeof TSHIRT_VIEWS>("front");
-  const [shirtColor] = useState<string>("#FFFFFF");
-  const [isSaving, setIsSaving] = useState(false);
-  const [poseDetected, setPoseDetected] = useState(false);
-  const [sizeData, setSizeData] = useState<{ size: string; confidence: number; label: string } | null>(null);
-  const lastViewRef = useRef<keyof typeof TSHIRT_VIEWS>("front");
-  const viewBufferRef = useRef<{view: keyof typeof TSHIRT_VIEWS, count: number}>({view: "front", count: 0});
+    const [view, setView] = useState<string>("front");
+    const [shirtColor] = useState<string>("#FFFFFF");
+    const [isSaving, setIsSaving] = useState(false);
+    const [poseDetected, setPoseDetected] = useState(false);
+    const [sizeData, setSizeData] = useState<{ size: string; confidence: number; label: string } | null>(null);
+    const lastViewRef = useRef<string>("front");
+    const viewBufferRef = useRef<{view: string, count: number}>({view: "front", count: 0});
   const { toast } = useToast();
 
   const calculateSize = useCallback((landmarks: any[], videoWidth: number, videoHeight: number) => {
@@ -90,7 +99,8 @@ export default function Home() {
   useEffect(() => {
     const loadImages = async () => {
       const loaded: Record<string, HTMLImageElement> = {};
-      const promises = Object.entries(TSHIRT_VIEWS).map(([key, src]) => {
+      const views = TSHIRT_TYPES[shirtType];
+      const promises = Object.entries(views).map(([key, src]) => {
         return new Promise<void>((resolve) => {
           const img = new Image();
           img.src = src;
@@ -105,7 +115,7 @@ export default function Home() {
       setShirtImages(loaded);
     };
     loadImages();
-  }, []);
+  }, [shirtType]);
 
   const onResults = useCallback((results: Results) => {
     if (!canvasRef.current || !webcamRef.current?.video || Object.keys(shirtImages).length === 0) return;
@@ -162,7 +172,7 @@ export default function Home() {
         const sideViewThreshold = 0.08; 
         const isSideView = shoulderDistance < sideViewThreshold && !isFacingAway && (Math.abs(leftShoulder.z - rightShoulder.z) > 0.1);
         
-        let detectedView: keyof typeof TSHIRT_VIEWS = "front";
+        let detectedView = "front";
         if (isSideView) {
           detectedView = leftShoulder.z < rightShoulder.z ? "right" : "left"; 
         } else if (isFacingAway) {
@@ -350,6 +360,24 @@ export default function Home() {
 
               {/* Side Actions */}
               <div className="flex flex-col items-end gap-3 pointer-events-auto">
+                <div className="flex flex-col gap-2 mb-2">
+                  <Button
+                    variant={shirtType === 'standard' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setShirtType('standard')}
+                    className="rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider"
+                  >
+                    Standard
+                  </Button>
+                  <Button
+                    variant={shirtType === 'fullsleeve' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setShirtType('fullsleeve')}
+                    className="rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider"
+                  >
+                    Full Sleeve
+                  </Button>
+                </div>
                 <Button
                   variant="outline"
                   size="icon"
