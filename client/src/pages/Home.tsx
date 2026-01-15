@@ -21,6 +21,7 @@ export default function Home() {
   const [isCameraActive, setIsCameraActive] = useState(true); // Default to active for seamless entry
   const [shirtImages, setShirtImages] = useState<Record<string, HTMLImageElement>>({});
   const [view, setView] = useState<keyof typeof TSHIRT_VIEWS>("front");
+  const viewHistoryRef = useRef<(keyof typeof TSHIRT_VIEWS)[]>([]);
   const [shirtColor] = useState<string>("#FFFFFF");
   const [isSaving, setIsSaving] = useState(false);
   const [poseDetected, setPoseDetected] = useState(false);
@@ -155,8 +156,25 @@ export default function Home() {
           centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.28);
         }
         
-        setView(detectedView);
-        const shirtImage = shirtImages[detectedView];
+        // Smoothing view transitions to prevent flickering
+        viewHistoryRef.current.push(detectedView);
+        if (viewHistoryRef.current.length > 10) {
+          viewHistoryRef.current.shift();
+        }
+
+        // Only switch view if it's consistent in history
+        const counts = viewHistoryRef.current.reduce((acc, v) => {
+          acc[v] = (acc[v] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+
+        const mostFrequentView = Object.entries(counts).reduce((a, b) => b[1] > a[1] ? b : a)[0] as keyof typeof TSHIRT_VIEWS;
+        
+        if (mostFrequentView !== view) {
+          setView(mostFrequentView);
+        }
+
+        const shirtImage = shirtImages[view];
         if (shirtImage) {
           const bodyHeightPx = Math.abs(leftHip.y - leftShoulder.y) * videoHeight;
           const stableSideWidthPx = bodyHeightPx * 0.8;
