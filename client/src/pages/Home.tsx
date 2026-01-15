@@ -97,6 +97,10 @@ export default function Home() {
     ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    // Mirror the canvas to match the mirrored webcam
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    
     // Draw the camera feed
     ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
 
@@ -135,7 +139,7 @@ export default function Home() {
         const isSideView = shoulderDistance < sideViewThreshold && !isFacingAway && (Math.abs(leftShoulder.z - rightShoulder.z) > 0.1);
         
         if (isSideView) {
-          detectedView = leftShoulder.z < rightShoulder.z ? "right" : "left";
+          detectedView = leftShoulder.z < rightShoulder.z ? "left" : "right"; // Swap left/right for mirrored view
           const bodyHeightPx = Math.abs(leftHip.y - leftShoulder.y) * videoHeight;
           const stableSideWidthPx = bodyHeightPx * 0.8;
           const drawWidth = stableSideWidthPx * 1.6;
@@ -164,6 +168,7 @@ export default function Home() {
           const drawWidth = shoulderWidthPx * (isSideView ? 1.6 : 2.2);
           const drawHeight = drawWidth * (shirtImage.height / shirtImage.width);
 
+          // Remove manual mirroring scale since we mirrored the whole context
           ctx.translate(centerX, centerY);
           if (shirtColor !== "#FFFFFF") {
             const tempCanvas = document.createElement('canvas');
