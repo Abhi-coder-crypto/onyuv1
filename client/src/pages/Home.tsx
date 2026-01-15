@@ -164,7 +164,7 @@ export default function Home() {
         
         let detectedView: keyof typeof TSHIRT_VIEWS = "front";
         if (isSideView) {
-          detectedView = leftShoulder.z < rightShoulder.z ? "left" : "right"; 
+          detectedView = leftShoulder.z < rightShoulder.z ? "right" : "left"; 
         } else if (isFacingAway) {
           detectedView = "back";
           const faceVisibilityThreshold = 0.15;
