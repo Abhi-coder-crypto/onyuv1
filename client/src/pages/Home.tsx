@@ -231,20 +231,28 @@ export default function Home() {
     ctx.restore();
   }, [shirtImages, shirtColor, calculateSize]);
 
+  const poseRef = useRef<Pose | null>(null);
+
   useEffect(() => {
-    let camera: Camera | null = null;
-    if (isCameraActive && webcamRef.current?.video) {
-      const pose = new Pose({
+    if (!poseRef.current) {
+      poseRef.current = new Pose({
         locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
       });
-      pose.setOptions({
+      poseRef.current.setOptions({
         modelComplexity: 1,
         smoothLandmarks: true,
         enableSegmentation: false,
         minDetectionConfidence: 0.5,
         minTrackingConfidence: 0.5,
       });
-      pose.onResults(onResults);
+    }
+    poseRef.current.onResults(onResults);
+  }, [onResults]);
+
+  useEffect(() => {
+    let camera: Camera | null = null;
+    if (isCameraActive && webcamRef.current?.video && poseRef.current) {
+      const pose = poseRef.current;
       camera = new Camera(webcamRef.current.video, {
         onFrame: async () => {
           if (webcamRef.current?.video) {
@@ -256,7 +264,9 @@ export default function Home() {
       });
       camera.start();
     }
-    return () => { if (camera) camera.stop(); };
+    return () => { 
+      if (camera) camera.stop();
+    };
   }, [isCameraActive, onResults]);
 
   const takeSnapshot = async () => {
