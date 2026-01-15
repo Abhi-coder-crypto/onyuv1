@@ -1,0 +1,60 @@
+chunk-LPF6KSF2.js?v=2127c022:21609 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1768498020.760000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1768498020.763000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 W0000 00:00:1768498020.764000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1768498024.226000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1768498024.231000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 W0000 00:00:1768498024.231000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ pose_solution_simd_wasm_bin.js:9
+Home.tsx:242 Uncaught ReferenceError: sizeData is not defined
+    at Home (Home.tsx:242:18)
+    at renderWithHooks (chunk-LPF6KSF2.js?v=2127c022:11596:26)
+    at updateFunctionComponent (chunk-LPF6KSF2.js?v=2127c022:14630:28)
+    at beginWork (chunk-LPF6KSF2.js?v=2127c022:15972:22)
+    at HTMLUnknownElement.callCallback2 (chunk-LPF6KSF2.js?v=2127c022:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-LPF6KSF2.js?v=2127c022:3705:24)
+    at invokeGuardedCallback (chunk-LPF6KSF2.js?v=2127c022:3739:39)
+    at beginWork$1 (chunk-LPF6KSF2.js?v=2127c022:19818:15)
+    at performUnitOfWork (chunk-LPF6KSF2.js?v=2127c022:19251:20)
+    at workLoopSync (chunk-LPF6KSF2.js?v=2127c022:19190:13)
+Home.tsx:242 Uncaught ReferenceError: sizeData is not defined
+    at Home (Home.tsx:242:18)
+    at renderWithHooks (chunk-LPF6KSF2.js?v=2127c022:11596:26)
+    at updateFunctionComponent (chunk-LPF6KSF2.js?v=2127c022:14630:28)
+    at beginWork (chunk-LPF6KSF2.js?v=2127c022:15972:22)
+    at HTMLUnknownElement.callCallback2 (chunk-LPF6KSF2.js?v=2127c022:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-LPF6KSF2.js?v=2127c022:3705:24)
+    at invokeGuardedCallback (chunk-LPF6KSF2.js?v=2127c022:3739:39)
+    at beginWork$1 (chunk-LPF6KSF2.js?v=2127c022:19818:15)
+    at performUnitOfWork (chunk-LPF6KSF2.js?v=2127c022:19251:20)
+    at workLoopSync (chunk-LPF6KSF2.js?v=2127c022:19190:13)
+chunk-LPF6KSF2.js?v=2127c022:14080 The above error occurred in the <Home> component:
+
+    at Home (https://b2db934d-19ae-480c-b2f3-5117fa3e55eb-00-2of4mkkfrhz3a.kirk.replit.dev/src/pages/Home.tsx?t=1768498242302:34:27)
+    at Route (https://b2db934d-19ae-480c-b2f3-5117fa3e55eb-00-2of4mkkfrhz3a.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=5d0a2b59:322:16)
+    at Switch (https://b2db934d-19ae-480c-b2f3-5117fa3e55eb-00-2of4mkkfrhz3a.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=5d0a2b59:378:17)
+    at Router
+    at Provider (https://b2db934d-19ae-480c-b2f3-5117fa3e55eb-00-2of4mkkfrhz3a.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5ICMA7FX.js?v=2127c022:28:15)
+    at TooltipProvider (https://b2db934d-19ae-480c-b2f3-5117fa3e55eb-00-2of4mkkfrhz3a.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=14a21f81:2240:5)
+    at QueryClientProvider (https://b2db934d-19ae-480c-b2f3-5117fa3e55eb-00-2of4mkkfrhz3a.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=74d287c3:2747:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-LPF6KSF2.js?v=2127c022:14080
+Home.tsx:242 Uncaught (in promise) ReferenceError: sizeData is not defined
+    at Home (Home.tsx:242:18)
+    at renderWithHooks (chunk-LPF6KSF2.js?v=2127c022:11596:26)
+    at updateFunctionComponent (chunk-LPF6KSF2.js?v=2127c022:14630:28)
+    at beginWork (chunk-LPF6KSF2.js?v=2127c022:15972:22)
+    at beginWork$1 (chunk-LPF6KSF2.js?v=2127c022:19806:22)
+    at performUnitOfWork (chunk-LPF6KSF2.js?v=2127c022:19251:20)
+    at workLoopSync (chunk-LPF6KSF2.js?v=2127c022:19190:13)
+    at renderRootSync (chunk-LPF6KSF2.js?v=2127c022:19169:15)
+    at recoverFromConcurrentError (chunk-LPF6KSF2.js?v=2127c022:18786:28)
+    at performSyncWorkOnRoot (chunk-LPF6KSF2.js?v=2127c022:18932:28)

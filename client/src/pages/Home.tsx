@@ -24,7 +24,42 @@ export default function Home() {
   const [shirtColor] = useState<string>("#FFFFFF");
   const [isSaving, setIsSaving] = useState(false);
   const [poseDetected, setPoseDetected] = useState(false);
+  const [sizeData, setSizeData] = useState<{ size: string; confidence: number; label: string } | null>(null);
   const { toast } = useToast();
+
+  const calculateSize = useCallback((landmarks: any[], videoWidth: number, videoHeight: number) => {
+    const leftShoulder = landmarks[11];
+    const rightShoulder = landmarks[12];
+
+    const shoulderWidthPx = Math.sqrt(
+      Math.pow((leftShoulder.x - rightShoulder.x) * videoWidth, 2) +
+      Math.pow((leftShoulder.y - rightShoulder.y) * videoHeight, 2)
+    );
+
+    let size = "M";
+    let confidence = 0;
+    const normShoulderWidth = shoulderWidthPx / videoWidth;
+    
+    if (normShoulderWidth < 0.22) {
+      size = "S";
+      confidence = Math.min(95, 70 + (0.22 - normShoulderWidth) * 100);
+    } else if (normShoulderWidth < 0.32) {
+      size = "M";
+      confidence = Math.min(98, 80 + (0.32 - normShoulderWidth) * 50);
+    } else if (normShoulderWidth < 0.42) {
+      size = "L";
+      confidence = Math.min(96, 75 + (0.42 - normShoulderWidth) * 40);
+    } else {
+      size = "XL";
+      confidence = Math.min(92, 60 + (normShoulderWidth - 0.42) * 30);
+    }
+
+    return {
+      size,
+      confidence: Math.round(confidence),
+      label: size === "M" ? "Perfect Fit" : "Suggested"
+    };
+  }, []);
 
   // Load all t-shirt views
   useEffect(() => {
@@ -153,7 +188,7 @@ export default function Home() {
       }
     }
     ctx.restore();
-  }, [shirtImages, shirtColor]);
+  }, [shirtImages, shirtColor, calculateSize]);
 
   useEffect(() => {
     let camera: Camera | null = null;
@@ -189,7 +224,7 @@ export default function Home() {
       setIsSaving(true);
       const dataUrl = canvasRef.current.toDataURL("image/png");
       const link = document.createElement("a");
-      link.download = `try-on-${new Date().getTime()}.png`;
+      link.download = `try-on-\${new Date().getTime()}.png`;
       link.href = dataUrl;
       document.body.appendChild(link);
       link.click();
@@ -235,7 +270,7 @@ export default function Home() {
                 </Button>
                 
                 <div className="px-4 py-2 rounded-full bg-white/40 backdrop-blur-md border border-black/10 flex items-center gap-2 text-black">
-                  <div className={`w-2 h-2 rounded-full ${poseDetected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                  <div className={`w-2 h-2 rounded-full \${poseDetected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
                   <span className="text-sm font-medium">{poseDetected ? 'Tracking active' : 'Detecting...'}</span>
                 </div>
 
@@ -286,9 +321,9 @@ export default function Home() {
               <div className="flex flex-col items-center gap-4">
                 <div className="px-6 py-3 rounded-2xl bg-white/40 backdrop-blur-md border border-black/10 flex flex-col items-center gap-2 pointer-events-auto">
                    <div className="flex items-center gap-3">
-                      <div className={`px-3 py-1 rounded-md text-xs font-bold uppercase ${view === 'front' ? 'bg-black text-white' : 'bg-black/5 text-black/50'}`}>Front</div>
-                      <div className={`px-3 py-1 rounded-md text-xs font-bold uppercase ${view === 'back' ? 'bg-black text-white' : 'bg-black/5 text-black/50'}`}>Back</div>
-                      <div className={`px-3 py-1 rounded-md text-xs font-bold uppercase ${view === 'left' || view === 'right' ? 'bg-black text-white' : 'bg-black/5 text-black/50'}`}>Side</div>
+                      <div className={`px-3 py-1 rounded-md text-xs font-bold uppercase \${view === 'front' ? 'bg-black text-white' : 'bg-black/5 text-black/50'}`}>Front</div>
+                      <div className={`px-3 py-1 rounded-md text-xs font-bold uppercase \${view === 'back' ? 'bg-black text-white' : 'bg-black/5 text-black/50'}`}>Back</div>
+                      <div className={`px-3 py-1 rounded-md text-xs font-bold uppercase \${view === 'left' || view === 'right' ? 'bg-black text-white' : 'bg-black/5 text-black/50'}`}>Side</div>
                    </div>
                    <p className="text-xs text-black/60 text-center">
                      {poseDetected ? "Tracking active. Turn around to see different views." : "Step back until your upper body is visible."}
