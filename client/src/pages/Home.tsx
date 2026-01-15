@@ -156,12 +156,15 @@ export default function Home() {
         const isHeadBehindShoulders = (nose.z > avgShoulderZ + 0.05);
         const isFacingAway = !isFaceVisible || isHeadBehindShoulders;
         
+        const centerX = ((leftShoulder.x + rightShoulder.x) / 2) * videoWidth;
+        let centerY = 0;
+
         const sideViewThreshold = 0.08; 
         const isSideView = shoulderDistance < sideViewThreshold && !isFacingAway && (Math.abs(leftShoulder.z - rightShoulder.z) > 0.1);
         
         let detectedView: keyof typeof TSHIRT_VIEWS = "front";
         if (isSideView) {
-          detectedView = leftShoulder.z < rightShoulder.z ? "right" : "left"; 
+          detectedView = leftShoulder.z < rightShoulder.z ? "left" : "right"; 
         } else if (isFacingAway) {
           detectedView = "back";
           const faceVisibilityThreshold = 0.15;
@@ -196,16 +199,12 @@ export default function Home() {
           const drawWidth = shoulderWidthPx * ((stableView === "left" || stableView === "right") ? 1.6 : 2.2);
           const drawHeight = drawWidth * (shirtImage.height / shirtImage.width);
 
-          const centerX = (1 - (leftShoulder.x + rightShoulder.x) / 2) * videoWidth;
-          let centerY = 0;
-
           if (stableView === "right" || stableView === "left") {
             centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.25);
           } else {
             centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.28);
           }
 
-          // Remove manual mirroring scale since we mirrored the whole context
           ctx.translate(centerX, centerY);
           if (shirtColor !== "#FFFFFF") {
             const tempCanvas = document.createElement('canvas');
