@@ -25,6 +25,8 @@ export default function Home() {
   const [isSaving, setIsSaving] = useState(false);
   const [poseDetected, setPoseDetected] = useState(false);
   const [sizeData, setSizeData] = useState<{ size: string; confidence: number; label: string } | null>(null);
+  const lastViewRef = useRef<keyof typeof TSHIRT_VIEWS>("front");
+  const viewBufferRef = useRef<{view: keyof typeof TSHIRT_VIEWS, count: number}>({view: "front", count: 0});
   const { toast } = useToast();
 
   const calculateSize = useCallback((landmarks: any[], videoWidth: number, videoHeight: number) => {
@@ -154,24 +156,14 @@ export default function Home() {
         const isHeadBehindShoulders = (nose.z > avgShoulderZ + 0.05);
         const isFacingAway = !isFaceVisible || isHeadBehindShoulders;
         
-        const centerX = ((leftShoulder.x + rightShoulder.x) / 2) * videoWidth;
-        let centerY = 0; 
-        let detectedView: keyof typeof TSHIRT_VIEWS = "front";
-
         const sideViewThreshold = 0.08; 
         const isSideView = shoulderDistance < sideViewThreshold && !isFacingAway && (Math.abs(leftShoulder.z - rightShoulder.z) > 0.1);
         
+        let detectedView: keyof typeof TSHIRT_VIEWS = "front";
         if (isSideView) {
-          // Correctly map side views: In mirrored view, if left shoulder is closer (smaller z), it's the right side of the body
           detectedView = leftShoulder.z < rightShoulder.z ? "right" : "left"; 
-          const bodyHeightPx = Math.abs(leftHip.y - leftShoulder.y) * videoHeight;
-          const stableSideWidthPx = bodyHeightPx * 0.8;
-          const drawWidth = stableSideWidthPx * 1.6;
-          const sideDrawHeight = drawWidth * (shirtImages[detectedView]?.height / shirtImages[detectedView]?.width || 1);
-          centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (sideDrawHeight * 0.25);
         } else if (isFacingAway) {
           detectedView = "back";
-          // Increase nose/face check sensitivity for back view to prevent flickering
           const faceVisibilityThreshold = 0.15;
           const isFaceVisibleStrict = (nose.visibility || 0) > faceVisibilityThreshold || 
                                      (leftEye.visibility || 0) > faceVisibilityThreshold || 
@@ -180,27 +172,38 @@ export default function Home() {
           if (isFaceVisibleStrict && !isHeadBehindShoulders) {
             detectedView = "front";
           }
-          
-          const shoulderWidthPx = Math.abs(leftShoulder.x - rightShoulder.x) * videoWidth;
-          const drawWidth = shoulderWidthPx * 2.2;
-          const drawHeight = drawWidth * (shirtImages.back?.height / shirtImages.back?.width || 1);
-          centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.28);
         } else {
           detectedView = "front";
-          const shoulderWidthPx = Math.abs(leftShoulder.x - rightShoulder.x) * videoWidth;
-          const drawWidth = shoulderWidthPx * 2.2;
-          const drawHeight = drawWidth * (shirtImages.front?.height / shirtImages.front?.width || 1);
-          centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.28);
         }
-        
-        setView(detectedView);
-        const shirtImage = shirtImages[detectedView];
+
+        // Stability Smoothing: Only switch views if the new view is consistent for 3 frames
+        if (detectedView === viewBufferRef.current.view) {
+          viewBufferRef.current.count++;
+        } else {
+          viewBufferRef.current.view = detectedView;
+          viewBufferRef.current.count = 1;
+        }
+
+        const stableView = viewBufferRef.current.count >= 3 ? detectedView : lastViewRef.current;
+        lastViewRef.current = stableView;
+        setView(stableView);
+
+        const shirtImage = shirtImages[stableView];
         if (shirtImage) {
           const bodyHeightPx = Math.abs(leftHip.y - leftShoulder.y) * videoHeight;
           const stableSideWidthPx = bodyHeightPx * 0.8;
-          const shoulderWidthPx = isSideView ? stableSideWidthPx : Math.abs(leftShoulder.x - rightShoulder.x) * videoWidth;
-          const drawWidth = shoulderWidthPx * (isSideView ? 1.6 : 2.2);
+          const shoulderWidthPx = (stableView === "left" || stableView === "right") ? stableSideWidthPx : Math.abs(leftShoulder.x - rightShoulder.x) * videoWidth;
+          const drawWidth = shoulderWidthPx * ((stableView === "left" || stableView === "right") ? 1.6 : 2.2);
           const drawHeight = drawWidth * (shirtImage.height / shirtImage.width);
+
+          const centerX = (1 - (leftShoulder.x + rightShoulder.x) / 2) * videoWidth;
+          let centerY = 0;
+
+          if (stableView === "right" || stableView === "left") {
+            centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.25);
+          } else {
+            centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.28);
+          }
 
           // Remove manual mirroring scale since we mirrored the whole context
           ctx.translate(centerX, centerY);
