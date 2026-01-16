@@ -332,11 +332,11 @@ export default function Home() {
                   <span className="text-sm font-medium">{poseDetected ? 'Tracking active' : 'Detecting...'}</span>
                 </div>
 
-                {sizeData && poseDetected && (view === 'front' || view === 'back') && (
-                  <div className="flex flex-col items-end gap-1 animate-in fade-in slide-in-from-top-2 duration-300">
+                {sizeData && poseDetected && (
+                  <div className="flex flex-col items-end gap-1 animate-in fade-in slide-in-from-top-2 duration-300 pointer-events-auto">
                     <div className="px-4 py-2 rounded-2xl bg-white/60 backdrop-blur-xl border border-black/10 shadow-xl flex items-center gap-4 text-black">
                       <div className="flex flex-col">
-                        <span className="text-[10px] uppercase font-bold tracking-wider text-black/40 leading-none">Suggested Size</span>
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-black/40 leading-none">Recommended Size</span>
                         <span className="text-2xl font-black leading-none">{sizeData.size}</span>
                       </div>
                       <div className="h-8 w-[1px] bg-black/5" />
@@ -344,13 +344,20 @@ export default function Home() {
                         <span className="text-[10px] uppercase font-bold tracking-wider text-black/40 leading-none">Fit Confidence</span>
                         <div className="flex items-center gap-1.5">
                           <span className="text-lg font-bold tabular-nums leading-none">{sizeData.confidence}%</span>
-                          <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                          <div className={`w-1.5 h-1.5 rounded-full ${sizeData.confidence > 80 ? 'bg-green-500' : 'bg-yellow-500'}`} />
                         </div>
                       </div>
                     </div>
-                    <div className="px-3 py-1 rounded-full bg-black text-white text-[10px] font-bold uppercase tracking-widest shadow-lg">
-                      {sizeData.label}
-                    </div>
+                    {sizeData.size === "S" && (
+                      <div className="px-3 py-1 rounded-full bg-blue-500 text-white text-[10px] font-bold uppercase tracking-widest shadow-lg">
+                        Junior Fit Suggestion
+                      </div>
+                    )}
+                    {sizeData.size !== "S" && (
+                      <div className="px-3 py-1 rounded-full bg-black text-white text-[10px] font-bold uppercase tracking-widest shadow-lg">
+                        {sizeData.label}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
