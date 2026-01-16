@@ -206,15 +206,18 @@ export default function Home() {
           const currentShoulderWidthPx = (stableView === "left" || stableView === "right") ? stableSideWidthPx : Math.abs(leftShoulder.x - rightShoulder.x) * videoWidth;
           
           const isFullSleeve = shirtType === "fullsleeve";
-          // Reduce multiplier slightly and adjust vertical centering
-          const drawWidth = currentShoulderWidthPx * (isFullSleeve ? 2.6 : 2.2); 
+          // Slightly increased width multiplier to better cover shoulders
+          const drawWidth = currentShoulderWidthPx * (isFullSleeve ? 2.8 : 2.4); 
           const drawHeight = drawWidth * (shirtImage.height / shirtImage.width);
 
           if (stableView === "right" || stableView === "left") {
             centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.25);
           } else {
-            // Adjust vertical centering: 0.28 was original, 0.35 was too low. Trying 0.22 for higher placement
-            centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.22);
+            // Further adjusted vertical centering: 0.22 was still a bit low based on screenshot. Trying 0.28 again but with better width scaling.
+            // Actually, to move it UP, the multiplier needs to be LARGER if adding, or just set it higher.
+            // (leftShoulder.y + rightShoulder.y) / 2 is the shoulder line. Adding drawHeight * multiplier moves it DOWN.
+            // So to move it UP towards the neck, we need a SMALLER multiplier.
+            centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.25);
           }
 
           ctx.translate(centerX, centerY);
