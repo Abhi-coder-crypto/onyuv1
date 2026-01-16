@@ -205,16 +205,16 @@ export default function Home() {
           const stableSideWidthPx = bodyHeightPx * 0.8;
           const currentShoulderWidthPx = (stableView === "left" || stableView === "right") ? stableSideWidthPx : Math.abs(leftShoulder.x - rightShoulder.x) * videoWidth;
           
-          // Adjust mapping for T-Shirts: width multiplier and vertical centering
           const isFullSleeve = shirtType === "fullsleeve";
-          const drawWidth = currentShoulderWidthPx * (isFullSleeve ? 2.8 : 2.2); 
+          // Reduce multiplier slightly and adjust vertical centering
+          const drawWidth = currentShoulderWidthPx * (isFullSleeve ? 2.6 : 2.2); 
           const drawHeight = drawWidth * (shirtImage.height / shirtImage.width);
 
           if (stableView === "right" || stableView === "left") {
             centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.25);
           } else {
-            // Lowered centering for better alignment with neck/torso
-            centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.35);
+            // Adjust vertical centering: 0.28 was original, 0.35 was too low. Trying 0.22 for higher placement
+            centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.22);
           }
 
           ctx.translate(centerX, centerY);
