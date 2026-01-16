@@ -42,8 +42,8 @@ export default function LandingPage() {
               
               {/* Dropdown Menu */}
               <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-black/5 shadow-2xl rounded-2xl py-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                <Link href="/shirts" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">Shirts</Link>
-                <Link href="/" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">T-Shirts</Link>
+                <a href="#" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">Shirts</a>
+                <a href="#" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">T-Shirts</a>
               </div>
             </div>
           </nav>
