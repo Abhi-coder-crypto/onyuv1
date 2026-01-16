@@ -204,13 +204,17 @@ export default function Home() {
           const bodyHeightPx = Math.abs(leftHip.y - leftShoulder.y) * videoHeight;
           const stableSideWidthPx = bodyHeightPx * 0.8;
           const currentShoulderWidthPx = (stableView === "left" || stableView === "right") ? stableSideWidthPx : Math.abs(leftShoulder.x - rightShoulder.x) * videoWidth;
-          const drawWidth = currentShoulderWidthPx * ((stableView === "left" || stableView === "right") ? 1.6 : 2.2);
+          
+          // Adjust mapping for T-Shirts: width multiplier and vertical centering
+          const isFullSleeve = shirtType === "fullsleeve";
+          const drawWidth = currentShoulderWidthPx * (isFullSleeve ? 2.8 : 2.2); 
           const drawHeight = drawWidth * (shirtImage.height / shirtImage.width);
 
           if (stableView === "right" || stableView === "left") {
             centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.25);
           } else {
-            centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.28);
+            // Lowered centering for better alignment with neck/torso
+            centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.35);
           }
 
           ctx.translate(centerX, centerY);
@@ -220,7 +224,7 @@ export default function Home() {
       }
     }
     ctx.restore();
-  }, [shirtImages, calculateSize]);
+  }, [shirtImages, calculateSize, shirtType]);
 
   const poseRef = useRef<Pose | null>(null);
 
