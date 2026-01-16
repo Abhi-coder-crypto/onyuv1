@@ -47,40 +47,37 @@ export default function Home() {
       Math.pow((leftShoulder.y - rightShoulder.y) * videoHeight, 2)
     );
 
-    // 1. Calculate base size from normalized shoulder width
+    const leftHip = landmarks[23];
+    const rightHip = landmarks[24];
+    const bodyHeightPx = Math.sqrt(
+      Math.pow((leftShoulder.x - leftHip.x) * videoWidth, 2) +
+      Math.pow((leftShoulder.y - leftHip.y) * videoHeight, 2)
+    );
+
+    // 1. Calculate base size from normalized shoulder width and body height
+    // normalized width/height accounts for distance from camera
     const normShoulderWidth = shoulderWidthPx / videoWidth;
+    const normBodyHeight = bodyHeightPx / videoHeight;
     
-    // Adjusted thresholds: 
-    // < 0.20: S
-    // 0.20 - 0.30: M
-    // 0.30 - 0.40: L
-    // > 0.40: XL
+    // Size estimation logic combining shoulder width and torso height
+    // Children typically have normShoulderWidth < 0.15 and normBodyHeight < 0.25
     let size = "M";
-    let targetWidth = 0.25; // center of M range
     
-    if (normShoulderWidth < 0.20) {
+    if (normShoulderWidth < 0.15 || normBodyHeight < 0.25) {
       size = "S";
-      targetWidth = 0.15;
-    } else if (normShoulderWidth < 0.30) {
+    } else if (normShoulderWidth < 0.25) {
       size = "M";
-      targetWidth = 0.25;
-    } else if (normShoulderWidth < 0.40) {
+    } else if (normShoulderWidth < 0.35) {
       size = "L";
-      targetWidth = 0.35;
     } else {
       size = "XL";
-      targetWidth = 0.45;
     }
 
     // 2. Calculate confidence based on proximity to the camera
-    // Optimal detection happens when shoulders occupy a healthy 15-40% of the screen
-    // If the person is too close (XL/Large) or too far (Small), confidence naturally drops
     const distanceScore = Math.max(0, 1 - Math.abs(normShoulderWidth - 0.25) * 2);
     let confidence = 70 + (distanceScore * 25);
 
     // Only suggest size if we have good tracking of key landmarks
-    const leftHip = landmarks[23];
-    const rightHip = landmarks[24];
     const hasLowerBody = (leftHip.visibility || 0) > 0.5 && (rightHip.visibility || 0) > 0.5;
     
     // If we can't see enough of the body, we shouldn't be confident in the size
