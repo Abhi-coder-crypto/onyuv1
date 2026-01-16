@@ -364,24 +364,6 @@ export default function Home() {
 
               {/* Side Actions */}
               <div className="flex flex-col items-end gap-3 pointer-events-auto">
-                <div className="flex flex-col gap-2 mb-2">
-                  <Button
-                    variant={shirtType === 'standard' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setShirtType('standard')}
-                    className="rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider"
-                  >
-                    Standard
-                  </Button>
-                  <Button
-                    variant={shirtType === 'fullsleeve' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setShirtType('fullsleeve')}
-                    className="rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider"
-                  >
-                    Full Sleeve
-                  </Button>
-                </div>
                 <Button
                   variant="outline"
                   size="icon"
