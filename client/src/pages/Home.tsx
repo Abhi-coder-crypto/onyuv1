@@ -10,7 +10,6 @@ import { useToast } from "@/hooks/use-toast";
 // Import asset paths directly to ensure they are available
 import fullSleeveFrontImg from "@assets/Full_sleeeve_front-removebg-preview_1768544609244.png";
 import fullSleeveBackImg from "@assets/Full_sleeve_backview_1768627554202.png";
-import fullSleeveLeftImg from "@assets/Full_sleeve_left_view_1768627554201.png";
 
 const TSHIRT_TYPES = {
   standard: {
@@ -22,7 +21,7 @@ const TSHIRT_TYPES = {
   fullsleeve: {
     front: fullSleeveFrontImg,
     back: fullSleeveBackImg,
-    left: fullSleeveLeftImg,
+    left: fullSleeveBackImg, // Temporary fallback
     right: "/tshirt-right.png",
   }
 };
