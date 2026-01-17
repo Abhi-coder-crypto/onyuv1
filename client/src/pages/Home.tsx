@@ -232,18 +232,21 @@ export default function Home() {
 
   useEffect(() => {
     if (!poseRef.current) {
-      poseRef.current = new Pose({
-        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+      const pose = new (window as any).Pose({
+        locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
       });
-      poseRef.current.setOptions({
+      pose.setOptions({
         modelComplexity: 1,
         smoothLandmarks: true,
         enableSegmentation: false,
         minDetectionConfidence: 0.5,
         minTrackingConfidence: 0.5,
       });
+      poseRef.current = pose;
     }
-    poseRef.current.onResults(onResults);
+    if (poseRef.current) {
+      poseRef.current.onResults(onResults);
+    }
   }, [onResults]);
 
   useEffect(() => {

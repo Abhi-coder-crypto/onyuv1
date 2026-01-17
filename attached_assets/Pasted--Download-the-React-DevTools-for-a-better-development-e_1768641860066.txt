@@ -1,0 +1,31 @@
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1768641834.365000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1768641834.370000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 W0000 00:00:1768641834.370000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 Aborted(Module.arguments has been replaced with plain arguments_ (the initial value can be provided on Module, but after startup the value is only looked for on a local variable of that name))
+abort @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 Uncaught (in promise) RuntimeError: Aborted(Module.arguments has been replaced with plain arguments_ (the initial value can be provided on Module, but after startup the value is only looked for on a local variable of that name))
+    at abort (pose_solution_simd_wasm_bin.js:9:17640)
+    at Object.get (pose_solution_simd_wasm_bin.js:9:7759)
+    at pose_solution_simd_wasm_bin.js:9:5881
+    at ra.i (@mediapipe_pose.js:1860:142)
+    at ua (@mediapipe_pose.js:193:21)
+    at va.next (@mediapipe_pose.js:210:68)
+    at @mediapipe_pose.js:236:15
+    at new Promise (<anonymous>)
+    at wa (@mediapipe_pose.js:232:16)
+    at E (@mediapipe_pose.js:240:16)
+pose_solution_simd_wasm_bin.js:9 Uncaught (in promise) RuntimeError: Aborted(Module.arguments has been replaced with plain arguments_ (the initial value can be provided on Module, but after startup the value is only looked for on a local variable of that name))
+    at abort (pose_solution_simd_wasm_bin.js:9:17640)
+    at Object.get (pose_solution_simd_wasm_bin.js:9:7759)
+    at pose_solution_simd_wasm_bin.js:9:5881
+    at ra.i (@mediapipe_pose.js:1860:142)
+    at ua (@mediapipe_pose.js:193:21)
+    at va.next (@mediapipe_pose.js:210:68)
+    at @mediapipe_pose.js:236:15
+    at new Promise (<anonymous>)
+    at wa (@mediapipe_pose.js:232:16)
+    at E (@mediapipe_pose.js:240:16)

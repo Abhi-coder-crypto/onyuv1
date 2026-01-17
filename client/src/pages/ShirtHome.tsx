@@ -221,7 +221,7 @@ export default function ShirtHome() {
           const drawHeight = drawWidth * (shirtImage.height / shirtImage.width);
 
           // Adjust vertical centering for full sleeves to sit higher on the body
-          centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * (isFullSleeve ? 0.35 : 0.26));
+          centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * (isFullSleeve ? 0.38 : 0.26));
 
           ctx.translate(centerX, centerY);
           ctx.drawImage(shirtImage, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
@@ -236,18 +236,21 @@ export default function ShirtHome() {
 
   useEffect(() => {
     if (!poseRef.current) {
-      poseRef.current = new Pose({
-        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+      const pose = new (window as any).Pose({
+        locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
       });
-      poseRef.current.setOptions({
+      pose.setOptions({
         modelComplexity: 1,
         smoothLandmarks: true,
         enableSegmentation: false,
         minDetectionConfidence: 0.5,
         minTrackingConfidence: 0.5,
       });
+      poseRef.current = pose;
     }
-    poseRef.current.onResults(onResults);
+    if (poseRef.current) {
+      poseRef.current.onResults(onResults);
+    }
   }, [onResults]);
 
   useEffect(() => {
