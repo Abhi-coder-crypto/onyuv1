@@ -17,14 +17,14 @@ const TSHIRT_TYPES = {
   standard: {
     front: "/tshirt-front.png",
     back: "/tshirt-back.png",
-    left: "/tshirt-left.png",
-    right: "/tshirt-right.png",
+    left: "/tshirt-right.png",
+    right: "/tshirt-left.png",
   },
   fullsleeve: {
     front: fullSleeveFrontImg,
     back: fullSleeveBackImg,
-    left: fullSleeveLeftImg,
-    right: fullSleeveRightImg,
+    left: fullSleeveRightImg,
+    right: fullSleeveLeftImg,
   }
 };
 
