@@ -18,8 +18,8 @@ const SHIRT_VARIANTS = {
   half: {
     front: shirtHalfFront,
     back: shirtHalfBack,
-    left: shirtHalfLeft,
-    right: shirtHalfRight,
+    left: shirtHalfRight,
+    right: shirtHalfLeft,
   },
   full: {
     front: fullSleeveImg,

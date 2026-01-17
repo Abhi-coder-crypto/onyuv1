@@ -23,8 +23,8 @@ const TSHIRT_TYPES = {
   fullsleeve: {
     front: fullSleeveFrontImg,
     back: fullSleeveBackImg,
-    left: fullSleeveLeftImg,
-    right: fullSleeveRightImg,
+    left: fullSleeveRightImg,
+    right: fullSleeveLeftImg,
   }
 };
 
