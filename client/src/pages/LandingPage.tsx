@@ -9,19 +9,31 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+// Import asset paths directly to ensure they are available
 import logoImg from "@assets/WhatsApp_Image_2026-01-13_at_4.42.21_PM-Photoroom_1768302850224.png";
 import fullSleeveFrontImg from "@assets/Full_sleeeve_front-removebg-preview_1768544609244.png";
+import fullSleeveBackImg from "@assets/Full_sleeve_backview_1768627554202.png";
+import fullSleeveLeftImg from "@assets/Full_sleeve_left_view_1768627554201.png";
 
-const TSHIRTS = [
+const HALF_SLEEVE_TSHIRTS = [
   { id: 1, image: "/tshirt-front.png", name: "Half Sleeve Front", type: "standard" },
   { id: 2, image: "/tshirt-back.png", name: "Half Sleeve Back", type: "standard" },
   { id: 3, image: "/tshirt-left.png", name: "Half Sleeve Left", type: "standard" },
   { id: 4, image: "/tshirt-right.png", name: "Half Sleeve Right", type: "standard" },
+];
+
+const FULL_SLEEVE_TSHIRTS = [
   { id: 5, image: fullSleeveFrontImg, name: "Full Sleeve Front", type: "fullsleeve" },
+  { id: 6, image: fullSleeveBackImg, name: "Full Sleeve Back", type: "fullsleeve" },
+  // Placeholder for the remaining 2 full sleeve variants
+  { id: 7, image: fullSleeveLeftImg, name: "Full Sleeve Left", type: "fullsleeve" },
+  { id: 8, image: fullSleeveLeftImg, name: "Full Sleeve Right", type: "fullsleeve" },
 ];
 
 export default function LandingPage() {
-  const [selectedVariant, setSelectedVariant] = useState(TSHIRTS[0]);
+  const [selectedVariant, setSelectedVariant] = useState(HALF_SLEEVE_TSHIRTS[0]);
+
+  const allTshirts = [...HALF_SLEEVE_TSHIRTS, ...FULL_SLEEVE_TSHIRTS];
 
   return (
     <div className="min-h-screen bg-white text-black">
@@ -101,29 +113,60 @@ export default function LandingPage() {
             </div>
 
             {/* Thumbnails */}
-            <div className="grid grid-cols-5 gap-4">
-              {TSHIRTS.map((tshirt) => (
-                <button
-                  key={tshirt.id}
-                  onClick={() => setSelectedVariant(tshirt)}
-                  className={`relative group bg-zinc-50 rounded-2xl aspect-square flex flex-col items-center justify-center overflow-hidden border transition-all duration-300 ${
-                    selectedVariant.id === tshirt.id ? 'border-black ring-1 ring-black/20' : 'border-black/5 hover:border-black/20'
-                  }`}
-                >
-                  <img 
-                    src={tshirt.image} 
-                    alt={tshirt.name} 
-                    className="w-full h-2/3 object-contain p-2 transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <span className="text-[8px] font-bold uppercase tracking-widest mt-1 mb-1 text-center px-1">{tshirt.name}</span>
-                  {/* Small Try On Icon on Thumbnails */}
-                  <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="w-4 h-4 rounded-full bg-black flex items-center justify-center">
-                      <Zap className="w-2 h-2 text-white fill-current" />
-                    </div>
-                  </div>
-                </button>
-              ))}
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Half Sleeves</h3>
+                <div className="grid grid-cols-4 gap-4">
+                  {HALF_SLEEVE_TSHIRTS.map((tshirt) => (
+                    <button
+                      key={tshirt.id}
+                      onClick={() => setSelectedVariant(tshirt)}
+                      className={`relative group bg-zinc-50 rounded-2xl aspect-square flex flex-col items-center justify-center overflow-hidden border transition-all duration-300 ${
+                        selectedVariant.id === tshirt.id ? 'border-black ring-1 ring-black/20' : 'border-black/5 hover:border-black/20'
+                      }`}
+                    >
+                      <img 
+                        src={tshirt.image} 
+                        alt={tshirt.name} 
+                        className="w-full h-2/3 object-contain p-2 transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <span className="text-[8px] font-bold uppercase tracking-widest mt-1 mb-1 text-center px-1">{tshirt.name}</span>
+                      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="w-4 h-4 rounded-full bg-black flex items-center justify-center">
+                          <Zap className="w-2 h-2 text-white fill-current" />
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Full Sleeves</h3>
+                <div className="grid grid-cols-4 gap-4">
+                  {FULL_SLEEVE_TSHIRTS.map((tshirt) => (
+                    <button
+                      key={tshirt.id}
+                      onClick={() => setSelectedVariant(tshirt)}
+                      className={`relative group bg-zinc-50 rounded-2xl aspect-square flex flex-col items-center justify-center overflow-hidden border transition-all duration-300 ${
+                        selectedVariant.id === tshirt.id ? 'border-black ring-1 ring-black/20' : 'border-black/5 hover:border-black/20'
+                      }`}
+                    >
+                      <img 
+                        src={tshirt.image} 
+                        alt={tshirt.name} 
+                        className="w-full h-2/3 object-contain p-2 transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <span className="text-[8px] font-bold uppercase tracking-widest mt-1 mb-1 text-center px-1">{tshirt.name}</span>
+                      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="w-4 h-4 rounded-full bg-black flex items-center justify-center">
+                          <Zap className="w-2 h-2 text-white fill-current" />
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
