@@ -30,8 +30,8 @@ const HALF_SLEEVE_SHIRTS = [
 const FULL_SLEEVE_SHIRTS = [
   { id: 5, image: fullSleeveImg, name: "Full Sleeve Front", type: "full" },
   { id: 6, image: fullSleeveBack, name: "Full Sleeve Back", type: "full" },
-  { id: 7, image: fullSleeveLeft, name: "Full Sleeve Left", type: "full" },
-  { id: 8, image: fullSleeveRight, name: "Full Sleeve Right", type: "full" },
+  { id: 7, image: fullSleeveRight, name: "Full Sleeve Left", type: "full" },
+  { id: 8, image: fullSleeveLeft, name: "Full Sleeve Right", type: "full" },
 ];
 
 export default function ShirtLandingPage() {
