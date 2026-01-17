@@ -12,6 +12,9 @@ import {
 // Import asset paths directly to ensure they are available
 import logoImg from "@assets/WhatsApp_Image_2026-01-13_at_4.42.21_PM-Photoroom_1768302850224.png";
 import fullSleeveImg from "@assets/Long-Sleeve-Shirt-Mockup-PSD-1536x1024-removebg-preview_1768544538115.png";
+import fullSleeveBack from "@assets/Back_1768630971723.png";
+import fullSleeveLeft from "@assets/left_1768630971723.png";
+import fullSleeveRight from "@assets/Right_1768630971723.png";
 import shirtHalfFront from "@assets/Front_1768630945205.png";
 import shirtHalfBack from "@assets/Back_1768630945204.png";
 import shirtHalfLeft from "@assets/Left_1768630945204.png";
@@ -26,9 +29,9 @@ const HALF_SLEEVE_SHIRTS = [
 
 const FULL_SLEEVE_SHIRTS = [
   { id: 5, image: fullSleeveImg, name: "Full Sleeve Front", type: "full" },
-  { id: 6, image: fullSleeveImg, name: "Full Sleeve Back", type: "full" },
-  { id: 7, image: fullSleeveImg, name: "Full Sleeve Left", type: "full" },
-  { id: 8, image: fullSleeveImg, name: "Full Sleeve Right", type: "full" },
+  { id: 6, image: fullSleeveBack, name: "Full Sleeve Back", type: "full" },
+  { id: 7, image: fullSleeveLeft, name: "Full Sleeve Left", type: "full" },
+  { id: 8, image: fullSleeveRight, name: "Full Sleeve Right", type: "full" },
 ];
 
 export default function ShirtLandingPage() {
