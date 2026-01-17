@@ -21,12 +21,12 @@ const SHIRT_VARIANTS = {
     left: shirtHalfLeft,
     right: shirtHalfRight,
   },
-  full: {
-    front: fullSleeveImg,
-    back: fullSleeveImg,
-    left: fullSleeveImg,
-    right: fullSleeveImg,
-  }
+    full: {
+      front: fullSleeveImg,
+      back: shirtHalfBack,
+      left: shirtHalfLeft,
+      right: shirtHalfRight,
+    }
 };
 
 export default function ShirtHome() {
