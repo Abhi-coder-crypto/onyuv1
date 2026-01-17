@@ -179,13 +179,7 @@ export default function ShirtHome() {
         
         let detectedView = "front";
         if (isSideView) {
-          const isFullSleeve = shirtType === "full";
-          // Invert side logic specifically for full sleeves to match mirrored display behavior
-          if (isFullSleeve) {
-            detectedView = leftShoulder.z < rightShoulder.z ? "left" : "right";
-          } else {
-            detectedView = leftShoulder.z < rightShoulder.z ? "right" : "left";
-          }
+          detectedView = leftShoulder.z < rightShoulder.z ? "right" : "left"; 
         } else if (isFacingAway) {
           detectedView = "back";
           const faceVisibilityThresholdStrict = 0.15;
