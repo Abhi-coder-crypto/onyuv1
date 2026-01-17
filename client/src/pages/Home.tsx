@@ -205,18 +205,15 @@ export default function Home() {
         const shirtImage = shirtImages[stableView];
         if (shirtImage) {
           const bodyHeightPx = Math.abs(leftHip.y - leftShoulder.y) * videoHeight;
-          const stableSideWidthPx = bodyHeightPx * 0.9;
+          const stableSideWidthPx = bodyHeightPx * 0.8;
           const currentShoulderWidthPx = (stableView === "left" || stableView === "right") ? stableSideWidthPx : Math.abs(leftShoulder.x - rightShoulder.x) * videoWidth;
           
           const isFullSleeve = shirtType === "fullsleeve";
-          // Use more generous multipliers to ensure better coverage and tracking
-          const drawWidth = currentShoulderWidthPx * (isFullSleeve 
-            ? ((stableView === "left" || stableView === "right") ? 3.0 : 3.4) 
-            : ((stableView === "left" || stableView === "right") ? 2.8 : 3.2));
-            
+          // Adjusted width multipliers for better coverage and consistency
+          const drawWidth = currentShoulderWidthPx * (isFullSleeve ? 3.0 : 2.6); 
           const drawHeight = drawWidth * (shirtImage.height / shirtImage.width);
 
-          centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * (isFullSleeve ? 0.25 : 0.26));
+          centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.22);
 
           ctx.translate(centerX, centerY);
           ctx.drawImage(shirtImage, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
