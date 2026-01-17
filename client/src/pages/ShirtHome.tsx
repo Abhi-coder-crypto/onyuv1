@@ -23,9 +23,9 @@ const SHIRT_VARIANTS = {
   },
     full: {
       front: fullSleeveImg,
-      back: shirtHalfBack,
-      left: shirtHalfLeft,
-      right: shirtHalfRight,
+      back: fullSleeveImg,
+      left: fullSleeveImg,
+      right: fullSleeveImg,
     }
 };
 
