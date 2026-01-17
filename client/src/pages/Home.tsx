@@ -8,8 +8,10 @@ import { ArrowLeft, Camera as CameraIcon, X, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 // Import asset paths directly to ensure they are available
-import fullSleeveFrontImg from "@assets/Full_sleeeve_front-removebg-preview_1768544609244.png";
-import fullSleeveBackImg from "@assets/Full_sleeve_backview_1768627554202.png";
+import fullSleeveFrontImg from "@assets/Front_1768630871761.png";
+import fullSleeveBackImg from "@assets/Back_1768630871761.png";
+import fullSleeveLeftImg from "@assets/Left_1768630871760.png";
+import fullSleeveRightImg from "@assets/Right_1768630871760.png";
 
 const TSHIRT_TYPES = {
   standard: {
@@ -21,8 +23,8 @@ const TSHIRT_TYPES = {
   fullsleeve: {
     front: fullSleeveFrontImg,
     back: fullSleeveBackImg,
-    left: fullSleeveBackImg, // Temporary fallback
-    right: "/tshirt-right.png",
+    left: fullSleeveLeftImg,
+    right: fullSleeveRightImg,
   }
 };
 

@@ -11,8 +11,10 @@ import {
 } from "@/components/ui/accordion";
 // Import asset paths directly to ensure they are available
 import logoImg from "@assets/WhatsApp_Image_2026-01-13_at_4.42.21_PM-Photoroom_1768302850224.png";
-import fullSleeveFrontImg from "@assets/Full_sleeeve_front-removebg-preview_1768544609244.png";
-import fullSleeveBackImg from "@assets/Full_sleeve_backview_1768627554202.png";
+import fullSleeveFrontImg from "@assets/Front_1768630871761.png";
+import fullSleeveBackImg from "@assets/Back_1768630871761.png";
+import fullSleeveLeftImg from "@assets/Left_1768630871760.png";
+import fullSleeveRightImg from "@assets/Right_1768630871760.png";
 
 const HALF_SLEEVE_TSHIRTS = [
   { id: 1, image: "/tshirt-front.png", name: "Half Sleeve Front", type: "standard" },
@@ -24,9 +26,8 @@ const HALF_SLEEVE_TSHIRTS = [
 const FULL_SLEEVE_TSHIRTS = [
   { id: 5, image: fullSleeveFrontImg, name: "Full Sleeve Front", type: "fullsleeve" },
   { id: 6, image: fullSleeveBackImg, name: "Full Sleeve Back", type: "fullsleeve" },
-  // Placeholder for the remaining 2 full sleeve variants
-  { id: 7, image: fullSleeveBackImg, name: "Full Sleeve Left", type: "fullsleeve" },
-  { id: 8, image: fullSleeveBackImg, name: "Full Sleeve Right", type: "fullsleeve" },
+  { id: 7, image: fullSleeveLeftImg, name: "Full Sleeve Left", type: "fullsleeve" },
+  { id: 8, image: fullSleeveRightImg, name: "Full Sleeve Right", type: "fullsleeve" },
 ];
 
 export default function LandingPage() {
