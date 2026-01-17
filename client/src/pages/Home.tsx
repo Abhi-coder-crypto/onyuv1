@@ -214,7 +214,7 @@ export default function Home() {
           
           const isFullSleeve = shirtType === "fullsleeve";
           // Adjusted width multipliers for better coverage and consistency
-          const drawWidth = currentShoulderWidthPx * (isFullSleeve ? 3.4 : 3.0); 
+          const drawWidth = currentShoulderWidthPx * (isFullSleeve ? 3.0 : 2.6); 
           const drawHeight = drawWidth * (shirtImage.height / shirtImage.width);
 
           centerY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * (isFullSleeve ? 0.28 : 0.32));
