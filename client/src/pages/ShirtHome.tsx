@@ -229,18 +229,17 @@ export default function ShirtHome() {
           const currentShoulderWidthPx = (stableView === "left" || stableView === "right") ? stableSideWidthPx : Math.abs(leftShoulder.x - rightShoulder.x) * videoWidth;
           
           const isFullSleeve = shirtType === "full";
-          // Refined Shirt scaling: Using 3.5/3.1 for structural shirts to feel premium and fit properly
-          // Slightly reduced from previous 3.9/3.3 to eliminate the "big" feel
+          // Refined Shirt scaling: Using 3.3/2.9 for structural shirts to feel professional and tailored
           const targetWidth = currentShoulderWidthPx * (isFullSleeve 
-            ? ((stableView === "left" || stableView === "right") ? 3.3 : 3.6) 
-            : ((stableView === "left" || stableView === "right") ? 2.7 : 3.1));
+            ? ((stableView === "left" || stableView === "right") ? 3.1 : 3.4) 
+            : ((stableView === "left" || stableView === "right") ? 2.5 : 2.9));
             
           const drawHeight = targetWidth * (shirtImage.height / shirtImage.width);
 
           // Adjust vertical centering for perfect neck fit
           const targetY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * (isFullSleeve 
-            ? ((stableView === "front" || stableView === "back") ? 0.22 : 0.28) 
-            : 0.20)); // Sitting 1 inch higher for perfect collar alignment
+            ? ((stableView === "front" || stableView === "back") ? 0.18 : 0.28) 
+            : 0.16)); // Sitting higher for perfect collar alignment and professionalism
 
           // Premium Smoothing (EMA Filter) to eliminate jitter
           const alpha = 0.15; // Smoothing factor
