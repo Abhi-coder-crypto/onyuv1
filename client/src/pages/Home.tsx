@@ -242,7 +242,8 @@ export default function Home() {
 
           // Adjust vertical centering: side views sit high on shoulder
           // Adjusted verticalOffset from 0.45 down to 0.38 to move the garment UP slightly
-          const verticalOffset = isSideView ? 0.38 : 0.28;
+          // Further adjusted for fullsleeve to move it up an extra bit (0.38 -> 0.34)
+          const verticalOffset = isSideView ? 0.34 : (isFullSleeve ? 0.24 : 0.28);
           const targetY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * verticalOffset); 
 
           // Premium Smoothing (EMA Filter) to eliminate jitter
