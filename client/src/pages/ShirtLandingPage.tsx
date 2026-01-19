@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/accordion";
 // Import asset paths directly to ensure they are available
 import logoImg from "@assets/WhatsApp_Image_2026-01-13_at_4.42.21_PM-Photoroom_1768302850224.png";
-import fullSleeveImg from "@assets/Front_1768630971724.png";
+import fullSleeveImg from "@assets/Front_1768803260835.png";
 import fullSleeveBack from "@assets/Back_1768630971723.png";
 import fullSleeveLeft from "@assets/left_1768630971723.png";
 import fullSleeveRight from "@assets/Right_1768630971723.png";
