@@ -8,7 +8,7 @@ import { ArrowLeft, Camera as CameraIcon, X, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 // Import asset paths directly to ensure they are available
-import fullSleeveFrontImg from "@/assets/tshirt-full-sleeve-front-v2.png";
+import fullSleeveFrontImg from "@/assets/tshirt-full-sleeve-front-v3.png";
 import fullSleeveBackImg from "@assets/Back_1768630871761.png";
 import fullSleeveLeftImg from "@assets/Left_1768630871760.png";
 import fullSleeveRightImg from "@assets/Right_1768630871760.png";
