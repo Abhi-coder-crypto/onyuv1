@@ -293,12 +293,21 @@ export default function Home() {
 
   useEffect(() => {
     let camera: Camera | null = null;
+    let isProcessing = false;
+
     if (isCameraActive && webcamRef.current?.video && poseRef.current) {
       const pose = poseRef.current;
       camera = new Camera(webcamRef.current.video, {
         onFrame: async () => {
-          if (webcamRef.current?.video) {
-            await pose.send({ image: webcamRef.current.video });
+          if (webcamRef.current?.video && !isProcessing) {
+            isProcessing = true;
+            try {
+              await pose.send({ image: webcamRef.current.video });
+            } catch (err) {
+              console.error("MediaPipe error:", err);
+            } finally {
+              isProcessing = false;
+            }
           }
         },
         width: 1280,
