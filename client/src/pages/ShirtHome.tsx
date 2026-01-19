@@ -230,16 +230,15 @@ export default function ShirtHome() {
           
           const isFullSleeve = shirtType === "full";
           // Perfectly fit shirt width to exact shoulder length with premium precision multipliers
+          // Matching full-sleeve multipliers to half-sleeve's "perfect" tracking (3.3 for front/back, 2.9 for side)
           const targetWidth = currentShoulderWidthPx * (isFullSleeve 
-            ? ((stableView === "left" || stableView === "right") ? 3.5 : 3.9) 
+            ? ((stableView === "left" || stableView === "right") ? 2.9 : 3.3) 
             : ((stableView === "left" || stableView === "right") ? 2.9 : 3.3));
             
           const drawHeight = targetWidth * (shirtImage.height / shirtImage.width);
 
-          // Adjust vertical centering for half-sleeve shirts to sit 1 inch (approx 0.04-0.05 normalized) higher
-          const targetY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * (isFullSleeve 
-            ? ((stableView === "front" || stableView === "back") ? 0.22 : 0.28) 
-            : 0.22)); // Reduced from 0.26 to sit higher
+          // Adjust vertical centering: matching full-sleeve to half-sleeve's "perfect" 0.22 offset
+          const targetY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.22);
 
           // Premium Smoothing (EMA Filter) to eliminate jitter
           const alpha = 0.15; // Smoothing factor
