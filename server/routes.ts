@@ -37,5 +37,10 @@ export async function registerRoutes(
     res.json({ success: true });
   });
 
+  app.get(api.products.list.path, async (req, res) => {
+    const products = await storage.getProducts();
+    res.json(products);
+  });
+
   return httpServer;
 }

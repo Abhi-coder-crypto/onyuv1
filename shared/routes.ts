@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { insertSavedLookSchema, savedLooks } from './schema';
+import { insertSavedLookSchema, savedLooks, products } from './schema';
 
 export const api = {
   looks: {
@@ -23,6 +23,15 @@ export const api = {
       path: '/api/looks/:id',
       responses: {
         200: z.object({ success: z.boolean() }),
+      },
+    },
+  },
+  products: {
+    list: {
+      method: 'GET' as const,
+      path: '/api/products',
+      responses: {
+        200: z.array(z.custom<typeof products.$inferSelect>()),
       },
     },
   },
