@@ -236,7 +236,11 @@ export default function ShirtHome() {
             ? ((stableView === "left" || stableView === "right") ? 2.9 : 3.1) 
             : ((stableView === "left" || stableView === "right") ? 2.9 : 3.3));
             
-          const drawHeight = targetWidth * (shirtImage.height / shirtImage.width);
+          // SIDE VIEW HEIGHT & DEPTH ADJUSTMENT: 
+          // For full-sleeve front view, reduce height to fix "big in height" issue
+          const isFrontView = stableView === "front" || stableView === "back";
+          const heightMultiplier = isFullSleeve && isFrontView ? 0.92 : 1.0;
+          const drawHeight = (targetWidth * (shirtImage.height / shirtImage.width)) * heightMultiplier;
 
           // Adjust vertical centering: matching full-sleeve to half-sleeve's "perfect" 0.22 offset
           const targetY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * 0.22);
