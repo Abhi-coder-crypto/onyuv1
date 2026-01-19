@@ -242,9 +242,9 @@ export default function ShirtHome() {
           const heightMultiplier = isFullSleeve ? (isFrontView ? 0.86 : 1.15) : 1.0;
           const drawHeight = (targetWidth * (shirtImage.height / shirtImage.width)) * heightMultiplier;
 
-          // Vertical Centering: Front: 0.22, Back: 0.32 (optimized for back shoulder alignment)
-          const verticalOffset = isFullSleeve && isBackView ? 0.32 : 0.22;
-          const targetY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * verticalOffset);
+          // Vertical Centering: Front: 0.22, Back: 0.45 (Further adjusted to push the garment UP on the shoulders)
+          const verticalOffset = isFullSleeve && isBackView ? 0.45 : 0.22;
+          const targetY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * (0.22 - (isBackView ? 0.23 : 0)));
 
           // Premium Smoothing (EMA Filter) to eliminate jitter
           const alpha = 0.15; // Smoothing factor
