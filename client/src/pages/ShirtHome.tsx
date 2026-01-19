@@ -310,6 +310,13 @@ export default function ShirtHome() {
 
       const pose = poseRef.current;
       
+      // Clear any existing camera instance
+      if (cameraInstance) {
+        try {
+          cameraInstance.stop();
+        } catch (e) {}
+      }
+
       try {
         cameraInstance = new Camera(webcamRef.current.video, {
           onFrame: async () => {
@@ -326,9 +333,12 @@ export default function ShirtHome() {
           height: 720,
         });
 
+        // Use a small delay before starting to ensure video element is ready
+        await new Promise(resolve => setTimeout(resolve, 500));
         await cameraInstance.start();
       } catch (err) {
         console.error("Camera start error:", err);
+        // Suppress the error message and retry silently
         if (isActive) {
           setTimeout(initializeMediaPipe, 2000);
         }
