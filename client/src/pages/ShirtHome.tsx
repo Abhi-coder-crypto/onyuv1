@@ -12,7 +12,7 @@ import shirtHalfFront from "@assets/Gemini_Generated_Image_fpu0u0fpu0u0fpu0-remo
 import shirtHalfBack from "@assets/Back_1768630945204.png";
 import shirtHalfLeft from "@assets/Left_1768630945204.png";
 import shirtHalfRight from "@assets/Right_1768630945204.png";
-import fullSleeveImg from "@assets/Front_1768630971724.png";
+import fullSleeveImg from "@assets/Front_1768803260835.png";
 import fullSleeveBack from "@assets/Back_1768630971723.png";
 import fullSleeveLeft from "@assets/left_1768630971723.png";
 import fullSleeveRight from "@assets/Right_1768630971723.png";
