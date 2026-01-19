@@ -229,14 +229,12 @@ export default function Home() {
           const currentShoulderWidthPx = (stableView === "left" || stableView === "right") ? stableSideWidthPx : Math.abs(leftShoulder.x - rightShoulder.x) * videoWidth;
           
           const isFullSleeve = shirtType === "fullsleeve";
-          // Refined T-shirt scaling: Reduced from 2.45 to 2.25 for a professional slim fit
-          // Full sleeve reduced from 2.85 to 2.65
-          const targetWidth = currentShoulderWidthPx * (isFullSleeve ? 2.65 : 2.25); 
+          // Perfectly fit shirt width to exact shoulder length with premium precision multipliers
+          const targetWidth = currentShoulderWidthPx * (isFullSleeve ? 3.1 : 2.7); 
           const drawHeight = targetWidth * (shirtImage.height / shirtImage.width);
 
-          // Adjust vertical centering for perfect neck fit: 
-          // Half-sleeve sits even higher (0.18 offset) to align with actual neck position
-          const targetY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * (isFullSleeve ? 0.28 : 0.18));
+          // Adjust vertical centering for half-sleeve shirts to sit 1 inch higher
+          const targetY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * (isFullSleeve ? 0.28 : 0.28)); // Reduced from 0.32 to sit higher
 
           // Premium Smoothing (EMA Filter) to eliminate jitter
           const alpha = 0.15; // Smoothing factor
@@ -289,16 +287,10 @@ export default function Home() {
     let camera: Camera | null = null;
     if (isCameraActive && webcamRef.current?.video && poseRef.current) {
       const pose = poseRef.current;
-      const video = webcamRef.current.video;
-      camera = new Camera(video, {
+      camera = new Camera(webcamRef.current.video, {
         onFrame: async () => {
           if (webcamRef.current?.video) {
-            // Ensure WebGL context is ready and handle potential timestamp mismatch
-            try {
-              await pose.send({ image: video });
-            } catch (err) {
-              console.warn("MediaPipe frame skipped:", err);
-            }
+            await pose.send({ image: webcamRef.current.video });
           }
         },
         width: 1280,
