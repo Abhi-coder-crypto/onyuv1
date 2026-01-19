@@ -232,7 +232,13 @@ export default function Home() {
           // Refined T-shirt fit: Significantly reduced multipliers to remove 'massy' feel
           // Standard width multiplier reduced from 2.5 to 2.2 for a more tailored athletic fit
           const targetWidth = currentShoulderWidthPx * (isFullSleeve ? 2.7 : 2.2); 
-          const drawHeight = targetWidth * (shirtImage.height / shirtImage.width);
+          
+          // SIDE VIEW HEIGHT ADJUSTMENT: 
+          // If in side view (left or right), we reduce the height multiplier by 15% 
+          // to prevent the "massy/long" look from the side while preserving front/back.
+          const isSideView = stableView === "left" || stableView === "right";
+          const heightMultiplier = isSideView ? 0.85 : 1.0;
+          const drawHeight = (targetWidth * (shirtImage.height / shirtImage.width)) * heightMultiplier;
 
           // Adjust vertical centering for half-sleeve shirts to sit high on the neckline
           const targetY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * (isFullSleeve ? 0.28 : 0.28)); 
