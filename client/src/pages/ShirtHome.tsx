@@ -244,7 +244,9 @@ export default function ShirtHome() {
 
           // Premium Smoothing (EMA Filter) to eliminate jitter
           const alpha = 0.15; // Smoothing factor
-          smoothPointsRef.current.x = smoothPointsRef.current.x === 0 ? centerX : smoothPointsRef.current.x * (1 - alpha) + centerX * alpha;
+          // Shift centerX slightly to the left (by 2% of video width) to fix the "too right" alignment issue
+          const adjustedCenterX = centerX - (videoWidth * 0.02);
+          smoothPointsRef.current.x = smoothPointsRef.current.x === 0 ? adjustedCenterX : smoothPointsRef.current.x * (1 - alpha) + adjustedCenterX * alpha;
           smoothPointsRef.current.y = smoothPointsRef.current.y === 0 ? targetY : smoothPointsRef.current.y * (1 - alpha) + targetY * alpha;
           smoothPointsRef.current.width = smoothPointsRef.current.width === 0 ? targetWidth : smoothPointsRef.current.width * (1 - alpha) + targetWidth * alpha;
 
