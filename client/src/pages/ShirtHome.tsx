@@ -375,20 +375,20 @@ export default function ShirtHome() {
   };
 
   return (
-    <div className="fixed inset-0 bg-white text-black overflow-hidden z-50">
+    <div className="fixed inset-0 bg-black text-white overflow-hidden z-50">
       <main className="h-full w-full relative">
         {!isCameraActive ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 space-y-4">
-            <CameraIcon className="w-16 h-16 text-black/20 animate-pulse" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 space-y-4 z-50">
+            <CameraIcon className="w-16 h-16 text-white/20 animate-pulse" />
             <h3 className="text-2xl font-bold">AR experience paused</h3>
-            <Button size="lg" onClick={() => setIsCameraActive(true)} className="rounded-full bg-black text-white hover:bg-black/90">Resume Experience</Button>
+            <Button size="lg" onClick={() => setIsCameraActive(true)} className="rounded-full bg-white text-black hover:bg-white/90">Resume Experience</Button>
           </div>
         ) : (
           <>
             <Webcam
               ref={webcamRef}
               mirrored
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover z-0"
               videoConstraints={ { facingMode: "user" } }
             />
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" />
