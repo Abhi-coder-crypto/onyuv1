@@ -232,7 +232,8 @@ export default function Home() {
           const targetWidth = currentShoulderWidthPx * (isFullSleeve ? 3.1 : 2.7); 
           const drawHeight = targetWidth * (shirtImage.height / shirtImage.width);
 
-          const targetY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * (isFullSleeve ? 0.28 : 0.32));
+          // Adjust vertical centering for half-sleeve shirts to sit 1 inch higher
+          const targetY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * (isFullSleeve ? 0.28 : 0.28)); // Reduced from 0.32 to sit higher
 
           // Premium Smoothing (EMA Filter) to eliminate jitter
           const alpha = 0.15; // Smoothing factor

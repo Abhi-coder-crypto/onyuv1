@@ -235,10 +235,10 @@ export default function ShirtHome() {
             
           const drawHeight = targetWidth * (shirtImage.height / shirtImage.width);
 
-          // Adjust vertical centering for full sleeves to sit higher on the body
+          // Adjust vertical centering for half-sleeve shirts to sit 1 inch (approx 0.04-0.05 normalized) higher
           const targetY = ((leftShoulder.y + rightShoulder.y) / 2) * videoHeight + (drawHeight * (isFullSleeve 
             ? ((stableView === "front" || stableView === "back") ? 0.22 : 0.28) 
-            : 0.26));
+            : 0.22)); // Reduced from 0.26 to sit higher
 
           // Premium Smoothing (EMA Filter) to eliminate jitter
           const alpha = 0.15; // Smoothing factor
