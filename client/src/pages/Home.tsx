@@ -67,30 +67,31 @@ export default function Home() {
     let size = "M";
     let adjustment = "";
     
-    // Baseline: Measurement starting from the shoulder width
-    // Every suggestion is weighted against the shoulder-to-shoulder frame
-    if (normShoulderWidth < 0.16) {
+    // Premium International Sizing Standards
+    // Baseline: Shoulder width measurement for structural fit
+    // Adjustment: Body height for drape and coverage
+    if (normShoulderWidth < 0.17) {
       size = "S";
-      if (normBodyHeight > 0.35) adjustment = "Shoulder S - Length suggests M for coverage";
-      else if (normShoulderWidth < 0.12) adjustment = "Petite Shoulder - Precision S Fit";
-      else adjustment = "Shoulder Baseline: Standard S";
-    } else if (normShoulderWidth < 0.24) {
+      if (normBodyHeight > 0.38) adjustment = "Tailored Fit - M Suggested for Length";
+      else if (normShoulderWidth < 0.13) adjustment = "Precision Fit - True S Small";
+      else adjustment = "Premium Classic Fit - Size S";
+    } else if (normShoulderWidth < 0.25) {
       size = "M";
-      if (normBodyHeight > 0.48) adjustment = "Shoulder M - Height suggests L length";
-      else if (normBodyHeight < 0.38) adjustment = "Shoulder M - Length suggests S for crop fit";
-      else adjustment = "Shoulder Baseline: Perfect M Fit";
-    } else if (normShoulderWidth < 0.32) {
+      if (normBodyHeight > 0.50) adjustment = "Athletic Fit - L Suggested for Length";
+      else if (normBodyHeight < 0.40) adjustment = "Modern Fit - Size M (Tailored)";
+      else adjustment = "Perfect Fit - Standard Medium";
+    } else if (normShoulderWidth < 0.33) {
       size = "L";
-      if (normBodyHeight > 0.62) adjustment = "Shoulder L - Tall frame suggests XL";
-      else if (normBodyHeight < 0.50) adjustment = "Shoulder L - Regular length recommendation";
-      else adjustment = "Shoulder Baseline: Standard L";
+      if (normBodyHeight > 0.65) adjustment = "Grand Fit - XL Suggested for Height";
+      else if (normBodyHeight < 0.52) adjustment = "Executive Fit - Size L (Regular)";
+      else adjustment = "Signature Fit - Standard Large";
     } else {
       size = "XL";
-      if (normShoulderWidth > 0.38) adjustment = "Broad Shoulders - Relaxed XL Fit";
-      else adjustment = "Shoulder Baseline: Standard XL";
+      if (normShoulderWidth > 0.40) adjustment = "Stature Fit - XL Broad Build";
+      else adjustment = "Oversized Style - Size XL";
     }
 
-    const distanceScore = Math.max(0, 1 - Math.abs(normShoulderWidth - 0.20) * 2);
+    const distanceScore = Math.max(0, 1 - Math.abs(normShoulderWidth - 0.22) * 2);
     let confidence = 75 + (distanceScore * 20);
 
     const hasLowerBody = (leftHip.visibility || 0) > 0.5 && (rightHip.visibility || 0) > 0.5;
