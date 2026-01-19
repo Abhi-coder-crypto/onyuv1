@@ -302,22 +302,46 @@ export default function ShirtHome() {
   }, [onResults]);
 
   useEffect(() => {
-    let camera: Camera | null = null;
-    if (isCameraActive && webcamRef.current?.video && poseRef.current) {
+    let cameraInstance: any = null;
+    let isActive = true;
+
+    const initializeMediaPipe = async () => {
+      if (!isCameraActive || !webcamRef.current?.video || !poseRef.current) return;
+
       const pose = poseRef.current;
-      camera = new Camera(webcamRef.current.video, {
-        onFrame: async () => {
-          if (webcamRef.current?.video) {
-            await pose.send({ image: webcamRef.current.video });
-          }
-        },
-        width: 1280,
-        height: 720,
-      });
-      camera.start();
-    }
-    return () => { 
-      if (camera) camera.stop();
+      
+      try {
+        cameraInstance = new Camera(webcamRef.current.video, {
+          onFrame: async () => {
+            if (!isActive || !webcamRef.current?.video) return;
+            try {
+              await pose.send({ image: webcamRef.current.video });
+            } catch (err) {
+              if (!(err instanceof Error && err.message.includes("Aborted"))) {
+                console.error("MediaPipe error:", err);
+              }
+            }
+          },
+          width: 1280,
+          height: 720,
+        });
+
+        await cameraInstance.start();
+      } catch (err) {
+        console.error("Camera start error:", err);
+        if (isActive) {
+          setTimeout(initializeMediaPipe, 2000);
+        }
+      }
+    };
+
+    initializeMediaPipe();
+
+    return () => {
+      isActive = false;
+      if (cameraInstance) {
+        cameraInstance.stop();
+      }
     };
   }, [isCameraActive, onResults]);
 
