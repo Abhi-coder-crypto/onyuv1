@@ -230,10 +230,9 @@ export default function ShirtHome() {
           
           const isFullSleeve = shirtType === "full";
           // Perfectly fit shirt width to exact shoulder length with premium precision multipliers
-          // Reduced multipliers from 3.9/3.3 to 3.2/2.8 to prevent it from being "too big"
           const targetWidth = currentShoulderWidthPx * (isFullSleeve 
-            ? ((stableView === "left" || stableView === "right") ? 2.8 : 3.2) 
-            : ((stableView === "left" || stableView === "right") ? 2.4 : 2.8));
+            ? ((stableView === "left" || stableView === "right") ? 3.5 : 3.9) 
+            : ((stableView === "left" || stableView === "right") ? 2.9 : 3.3));
             
           const drawHeight = targetWidth * (shirtImage.height / shirtImage.width);
 
@@ -244,9 +243,7 @@ export default function ShirtHome() {
 
           // Premium Smoothing (EMA Filter) to eliminate jitter
           const alpha = 0.15; // Smoothing factor
-          // Shift centerX slightly to the left (by 2% of video width) to fix the "too right" alignment issue
-          const adjustedCenterX = centerX - (videoWidth * 0.02);
-          smoothPointsRef.current.x = smoothPointsRef.current.x === 0 ? adjustedCenterX : smoothPointsRef.current.x * (1 - alpha) + adjustedCenterX * alpha;
+          smoothPointsRef.current.x = smoothPointsRef.current.x === 0 ? centerX : smoothPointsRef.current.x * (1 - alpha) + centerX * alpha;
           smoothPointsRef.current.y = smoothPointsRef.current.y === 0 ? targetY : smoothPointsRef.current.y * (1 - alpha) + targetY * alpha;
           smoothPointsRef.current.width = smoothPointsRef.current.width === 0 ? targetWidth : smoothPointsRef.current.width * (1 - alpha) + targetWidth * alpha;
 
