@@ -103,18 +103,12 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
       scene.add(torso);
       torsoRef.current = torso;
 
-      // Create Segmented Sleeves
-      const sleeveGeo = new THREE.PlaneGeometry(0.5, 1);
-      
-      leftUpperSleeveRef.current = new THREE.Mesh(sleeveGeo, mat.clone());
-      leftLowerSleeveRef.current = new THREE.Mesh(sleeveGeo, mat.clone());
-      rightUpperSleeveRef.current = new THREE.Mesh(sleeveGeo, mat.clone());
-      rightLowerSleeveRef.current = new THREE.Mesh(sleeveGeo, mat.clone());
-
-      scene.add(leftUpperSleeveRef.current);
-      scene.add(leftLowerSleeveRef.current);
-      scene.add(rightUpperSleeveRef.current);
-      scene.add(rightLowerSleeveRef.current);
+      // Sleeves are now part of the main torso texture for stability
+      // and to avoid the "extra sleeves" look seen with segmented parts
+      leftUpperSleeveRef.current = null;
+      leftLowerSleeveRef.current = null;
+      rightUpperSleeveRef.current = null;
+      rightLowerSleeveRef.current = null;
     });
 
     return () => {
@@ -174,38 +168,14 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
       torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 7.5 - 1.5, 0.2);
       torsoRef.current.rotation.z = shoulderAngle;
       torsoRef.current.rotation.x = Math.PI; // Correct orientation
-      torsoRef.current.scale.set(shoulderWidth * 16, shoulderWidth * 20, 1);
+      torsoRef.current.scale.set(shoulderWidth * 20, shoulderWidth * 25, 1);
 
-      // Basic Sleeve Rotation (Upper/Lower segments)
-      if (leftUpperSleeveRef.current && leftLowerSleeveRef.current) {
-        leftUpperSleeveRef.current.visible = true;
-        leftLowerSleeveRef.current.visible = true;
-
-        const angleUL = Math.atan2(le.y - ls.y, le.x - ls.x);
-        leftUpperSleeveRef.current.position.set((ls.x - 0.5) * 10, -(ls.y - 0.5) * 7.5 - 1.5, 0.21);
-        leftUpperSleeveRef.current.rotation.z = angleUL + Math.PI/2;
-        leftUpperSleeveRef.current.scale.set(shoulderWidth * 4, shoulderWidth * 6, 1);
-
-        const angleLL = Math.atan2(lw.y - le.y, lw.x - le.x);
-        leftLowerSleeveRef.current.position.set((le.x - 0.5) * 10, -(le.y - 0.5) * 7.5 - 1.5, 0.22);
-        leftLowerSleeveRef.current.rotation.z = angleLL + Math.PI/2;
-        leftLowerSleeveRef.current.scale.set(shoulderWidth * 3.5, shoulderWidth * 5, 1);
-      }
-
-      if (rightUpperSleeveRef.current && rightLowerSleeveRef.current) {
-        rightUpperSleeveRef.current.visible = true;
-        rightLowerSleeveRef.current.visible = true;
-
-        const angleUR = Math.atan2(re.y - rs.y, re.x - rs.x);
-        rightUpperSleeveRef.current.position.set((rs.x - 0.5) * 10, -(rs.y - 0.5) * 7.5 - 1.5, 0.21);
-        rightUpperSleeveRef.current.rotation.z = angleUR + Math.PI/2;
-        rightUpperSleeveRef.current.scale.set(shoulderWidth * 4, shoulderWidth * 6, 1);
-
-        const angleLR = Math.atan2(rw.y - re.y, rw.x - re.x);
-        rightLowerSleeveRef.current.position.set((re.x - 0.5) * 10, -(re.y - 0.5) * 7.5 - 1.5, 0.22);
-        rightLowerSleeveRef.current.rotation.z = angleLR + Math.PI/2;
-        rightLowerSleeveRef.current.scale.set(shoulderWidth * 3.5, shoulderWidth * 5, 1);
-      }
+      // Sleeves are handled by the main torso texture for better stability
+      // and to prevent detached sleeve artifacts
+      if (leftUpperSleeveRef.current) leftUpperSleeveRef.current.visible = false;
+      if (leftLowerSleeveRef.current) leftLowerSleeveRef.current.visible = false;
+      if (rightUpperSleeveRef.current) rightUpperSleeveRef.current.visible = false;
+      if (rightLowerSleeveRef.current) rightLowerSleeveRef.current.visible = false;
 
       // Size Recommendation (Rule-based engine)
       if (onSizeDetected) {
