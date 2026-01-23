@@ -35,6 +35,7 @@ Preferred communication style: Simple, everyday language.
 - **Database**: PostgreSQL via Drizzle ORM
 - **Schema Location**: `shared/schema.ts` - shared between client and server
 - **Migrations**: Managed via Drizzle Kit (`drizzle-kit push`)
+- **Image Storage**: Cloudinary for user try-on session photos
 
 ### Project Structure
 ```
@@ -48,7 +49,8 @@ Preferred communication style: Simple, everyday language.
 │   ├── db.ts         # Database connection
 │   ├── routes.ts     # API route handlers
 │   ├── storage.ts    # Data access layer
-│   └── static.ts     # Static file serving
+│   ├── static.ts     # Static file serving
+│   └── cloudinary.ts # Cloudinary upload utility
 ├── shared/           # Shared code between client/server
 │   ├── schema.ts     # Drizzle database schema
 │   └── routes.ts     # API route definitions with Zod validation

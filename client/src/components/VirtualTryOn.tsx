@@ -190,7 +190,9 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
     if (videoRef.current) {
       const camera = new cam.Camera(videoRef.current, {
         onFrame: async () => {
-          await poseInstance.send({ image: videoRef.current! });
+          if (videoRef.current && videoRef.current.readyState === 4) {
+            await poseInstance.send({ image: videoRef.current });
+          }
         },
         width: 640,
         height: 480,

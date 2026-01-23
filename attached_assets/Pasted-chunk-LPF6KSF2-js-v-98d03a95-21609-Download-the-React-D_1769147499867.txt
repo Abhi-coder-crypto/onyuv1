@@ -1,0 +1,24 @@
+chunk-LPF6KSF2.js?v=98d03a95:21609 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769147470.598000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769147470.607000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 W0000 00:00:1769147470.607000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769147472.125000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769147472.134000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 W0000 00:00:1769147472.134000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ pose_solution_simd_wasm_bin.js:9
+@mediapipe_pose.js?v=47041949:2052 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'width')
+    at ra.i (@mediapipe_pose.js?v=47041949:2052:156)
+    at ua (@mediapipe_pose.js?v=47041949:193:21)
+    at va.next (@mediapipe_pose.js?v=47041949:210:68)
+    at b (@mediapipe_pose.js?v=47041949:227:20)
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769147483.336000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769147483.342000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 W0000 00:00:1769147483.343000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ pose_solution_simd_wasm_bin.js:9
