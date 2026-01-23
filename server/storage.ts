@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { savedLooks, products, type InsertSavedLook, type SavedLook, type InsertProduct, type Product } from "@shared/schema";
+import { savedLooks, products, tryOnSessions, type InsertSavedLook, type SavedLook, type InsertProduct, type Product, type TryOnSession, type InsertTryOnSession } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
 export interface IStorage {
@@ -8,6 +8,8 @@ export interface IStorage {
   deleteLook(id: number): Promise<void>;
   getProducts(): Promise<Product[]>;
   createProduct(product: InsertProduct): Promise<Product>;
+  createTryOnSession(session: InsertTryOnSession): Promise<TryOnSession>;
+  getTryOnSession(id: number): Promise<TryOnSession | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -31,6 +33,16 @@ export class DatabaseStorage implements IStorage {
   async createProduct(product: InsertProduct): Promise<Product> {
     const [newProduct] = await db.insert(products).values(product).returning();
     return newProduct;
+  }
+
+  async createTryOnSession(session: InsertTryOnSession): Promise<TryOnSession> {
+    const [newSession] = await db.insert(tryOnSessions).values(session).returning();
+    return newSession;
+  }
+
+  async getTryOnSession(id: number): Promise<TryOnSession | undefined> {
+    const [session] = await db.select().from(tryOnSessions).where(eq(tryOnSessions.id, id));
+    return session;
   }
 }
 

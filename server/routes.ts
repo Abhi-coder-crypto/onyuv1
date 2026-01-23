@@ -42,5 +42,21 @@ export async function registerRoutes(
     res.json(products);
   });
 
+  app.post("/api/try-on/session", async (req, res) => {
+    try {
+      const session = await storage.createTryOnSession(req.body);
+      res.status(201).json(session);
+    } catch (err) {
+      res.status(400).json({ message: "Could not create session" });
+    }
+  });
+
+  app.get("/api/try-on/session/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const session = await storage.getTryOnSession(id);
+    if (!session) return res.status(404).json({ message: "Not found" });
+    res.json(session);
+  });
+
   return httpServer;
 }
