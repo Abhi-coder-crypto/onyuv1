@@ -89,23 +89,16 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
 
     const loader = new THREE.TextureLoader();
     loader.load(garmentUrl, (texture) => {
-      // Create Torso
-      const torsoGeo = new THREE.PlaneGeometry(3, 4);
+      // Create Torso with proper aspect ratio
+      const torsoGeo = new THREE.PlaneGeometry(1, 1);
       const mat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
       const torso = new THREE.Mesh(torsoGeo, mat);
       scene.add(torso);
       torsoRef.current = torso;
 
-      // Create Sleeves (Represented as planes for rotation logic)
-      const sleeveGeo = new THREE.PlaneGeometry(1, 2);
-      const leftSleeve = new THREE.Mesh(sleeveGeo, mat.clone());
-      const rightSleeve = new THREE.Mesh(sleeveGeo, mat.clone());
-      
-      scene.add(leftSleeve);
-      scene.add(rightSleeve);
-      
-      leftUpperSleeveRef.current = leftSleeve;
-      rightUpperSleeveRef.current = rightSleeve;
+      // Note: We hide sleeves for now as the main texture often includes them, 
+      // or we should use different textures for segmented parts.
+      // For a simple overlay, the torso plane with the full image is often enough.
     });
 
     return () => {
@@ -158,24 +151,14 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
       const torsoHeight = Math.abs((lh.y + rh.y)/2 - centerY);
 
       // Alignment: Shirt should start at shoulders and extend past hips
-      // Scaling increased to 18 for full torso coverage
+      // Scaling adjusted for better fit (not too long)
       // Stability: Torso centering and z-index adjustment
-      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 8 - 1.8, 0.05);
-      torsoRef.current.scale.set(shoulderWidth * 18, shoulderWidth * 22, 1);
+      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 8 - 0.5, 0.05);
+      torsoRef.current.scale.set(shoulderWidth * 6, shoulderWidth * 8, 1);
 
-      if (leftUpperSleeveRef.current && rightUpperSleeveRef.current) {
-        // Left Sleeve - Stability improvement with relative positioning
-        const leftAngle = Math.atan2(le.y - ls.y, le.x - ls.x);
-        leftUpperSleeveRef.current.position.set((ls.x - 0.5) * 10, -(ls.y - 0.5) * 8 - 0.4, 0.1);
-        leftUpperSleeveRef.current.rotation.z = leftAngle + Math.PI / 2;
-        leftUpperSleeveRef.current.scale.set(shoulderWidth * 7, shoulderWidth * 10, 1);
-
-        // Right Sleeve - Stability improvement with relative positioning
-        const rightAngle = Math.atan2(re.y - rs.y, re.x - rs.x);
-        rightUpperSleeveRef.current.position.set((rs.x - 0.5) * 10, -(rs.y - 0.5) * 8 - 0.4, 0.1);
-        rightUpperSleeveRef.current.rotation.z = rightAngle + Math.PI / 2;
-        rightUpperSleeveRef.current.scale.set(shoulderWidth * 7, shoulderWidth * 10, 1);
-      }
+      // Sleeves are now handled as part of the main torso texture for stability
+      if (leftUpperSleeveRef.current) leftUpperSleeveRef.current.visible = false;
+      if (rightUpperSleeveRef.current) rightUpperSleeveRef.current.visible = false;
 
       // Size Recommendation
       if (onSizeDetected) {
