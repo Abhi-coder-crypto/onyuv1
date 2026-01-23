@@ -66,7 +66,17 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
     const camera = new THREE.PerspectiveCamera(75, 640 / 480, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     
-    renderer.setSize(640, 480);
+    const updateSize = () => {
+      if (!threeCanvasRef.current) return;
+      const width = threeCanvasRef.current.clientWidth;
+      const height = threeCanvasRef.current.clientHeight;
+      renderer.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    };
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
     threeCanvasRef.current.appendChild(renderer.domElement);
 
     const light = new THREE.AmbientLight(0xffffff, 1.2);
@@ -100,6 +110,7 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
 
     return () => {
       renderer.dispose();
+      window.removeEventListener("resize", updateSize);
       if (threeCanvasRef.current) {
         threeCanvasRef.current.removeChild(renderer.domElement);
       }
@@ -194,8 +205,8 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
             await poseInstance.send({ image: videoRef.current });
           }
         },
-        width: 640,
-        height: 480,
+        width: 1280,
+        height: 720,
       });
       camera.start();
     }
@@ -238,7 +249,7 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
   };
 
   return (
-    <Card className="relative overflow-hidden aspect-video bg-black flex items-center justify-center">
+    <Card className="relative overflow-hidden w-full h-full bg-black flex items-center justify-center rounded-3xl border-none">
       {isLoading && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-50">
           <Loader2 className="w-8 h-8 animate-spin text-primary mb-2" />

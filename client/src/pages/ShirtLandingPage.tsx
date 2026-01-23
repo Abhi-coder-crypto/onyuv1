@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { ArrowRight, Shield, Zap, ShoppingCart, Heart, User, Search as SearchIcon, ChevronDown, Star } from "lucide-react";
+import { ArrowRight, Shield, Zap, ShoppingCart, Heart, User, Search as SearchIcon, ChevronDown, Star, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { VirtualTryOn } from "@/components/VirtualTryOn";
@@ -10,6 +10,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { AnimatePresence, motion } from "framer-motion";
 // Import asset paths directly to ensure they are available
 import logoImg from "@assets/WhatsApp_Image_2026-01-13_at_4.42.21_PM-Photoroom_1768302850224.png";
 import fullSleeveImg from "@/assets/shirt-full-sleeve-front-v2.png";
@@ -43,6 +45,56 @@ export default function ShirtLandingPage() {
 
   return (
     <div className="min-h-screen bg-white text-black">
+      {/* Full Screen Try-On Overlay */}
+      <AnimatePresence>
+        {showTryOn && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center"
+          >
+            <div className="absolute top-6 right-6 z-[110] flex gap-4">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="rounded-full bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-md px-6 font-bold"
+                onClick={() => setShowTryOn(false)}
+              >
+                <X className="mr-2 w-5 h-5" />
+                EXIT TRY-ON
+              </Button>
+            </div>
+            
+            <div className="w-full h-full max-w-5xl mx-auto p-4 md:p-8 flex flex-col justify-center">
+              <VirtualTryOn 
+                garmentUrl={selectedVariant.image} 
+                onSizeDetected={(size, note) => {
+                  setDetectedSize(size);
+                  setFitNote(note);
+                }}
+              />
+            </div>
+
+            {detectedSize && (
+              <motion.div 
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[110] bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-3xl flex items-center gap-4 text-white"
+              >
+                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
+                  <User className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-white/60">AI Fit Recommendation</p>
+                  <p className="text-xl font-bold">{detectedSize} — {fitNote || 'Perfect Fit'}</p>
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <header className="border-b border-black/5 sticky top-0 z-50 bg-white/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between">
@@ -101,45 +153,23 @@ export default function ShirtLandingPage() {
           {/* Left: Product Images */}
           <div className="lg:col-span-7 space-y-6">
             <div className="relative group bg-zinc-100 rounded-3xl overflow-hidden aspect-[4/5] flex items-center justify-center border border-black/5">
-              {showTryOn ? (
-                <div className="w-full h-full">
-                   <VirtualTryOn 
-                    garmentUrl={selectedVariant.image} 
-                    onSizeDetected={(size, note) => {
-                      setDetectedSize(size);
-                      setFitNote(note);
-                    }}
-                  />
-                  <Button 
-                    variant="secondary" 
-                    size="sm" 
-                    className="absolute top-4 right-4 z-30 rounded-full"
-                    onClick={() => setShowTryOn(false)}
-                  >
-                    Close Try-On
-                  </Button>
-                </div>
-              ) : (
-                <>
-                  <img 
-                    src={selectedVariant.image} 
-                    alt="Product main view" 
-                    className="w-full h-full object-contain p-12 transition-transform duration-700 group-hover:scale-105"
-                  />
-                  
-                  {/* Try On Button Overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/5 backdrop-blur-[2px]">
-                    <Button 
-                      size="lg" 
-                      className="rounded-full px-8 py-6 h-auto text-lg font-bold shadow-2xl bg-black text-white hover:bg-black/90 hover-elevate active-elevate-2"
-                      onClick={() => setShowTryOn(true)}
-                    >
-                      <Zap className="mr-2 w-6 h-6 fill-current text-white" />
-                      TRY ON NOW
-                    </Button>
-                  </div>
-                </>
-              )}
+              <img 
+                src={selectedVariant.image} 
+                alt="Product main view" 
+                className="w-full h-full object-contain p-12 transition-transform duration-700 group-hover:scale-105"
+              />
+              
+              {/* Try On Button Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/5 backdrop-blur-[2px]">
+                <Button 
+                  size="lg" 
+                  className="rounded-full px-8 py-6 h-auto text-lg font-bold shadow-2xl bg-black text-white hover:bg-black/90 hover-elevate active-elevate-2"
+                  onClick={() => setShowTryOn(true)}
+                >
+                  <Zap className="mr-2 w-6 h-6 fill-current text-white" />
+                  TRY ON NOW
+                </Button>
+              </div>
             </div>
 
             {/* Thumbnails */}
