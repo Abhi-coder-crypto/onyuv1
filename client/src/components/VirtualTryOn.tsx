@@ -59,6 +59,9 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
   const rightUpperSleeveRef = useRef<THREE.Mesh | null>(null);
   const rightLowerSleeveRef = useRef<THREE.Mesh | null>(null);
 
+  // Mesh for warping logic
+  const torsoMeshRef = useRef<THREE.Mesh | null>(null);
+
   // Smoothers for key points
   const smoothers = useRef<Record<number, EMASmoother>>({});
 
@@ -94,11 +97,24 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
     loader.load(garmentUrl, (texture) => {
       const mat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
       
-      // Create Torso - Single plane for the whole garment is more stable for single textures
-      const torsoGeo = new THREE.PlaneGeometry(1, 1);
+      // Create Torso Mesh with segments for deformation
+      const torsoGeo = new THREE.PlaneGeometry(1, 1, 4, 4);
       const torso = new THREE.Mesh(torsoGeo, mat);
       scene.add(torso);
       torsoRef.current = torso;
+
+      // Create Segmented Sleeves
+      const sleeveGeo = new THREE.PlaneGeometry(0.5, 1);
+      
+      leftUpperSleeveRef.current = new THREE.Mesh(sleeveGeo, mat.clone());
+      leftLowerSleeveRef.current = new THREE.Mesh(sleeveGeo, mat.clone());
+      rightUpperSleeveRef.current = new THREE.Mesh(sleeveGeo, mat.clone());
+      rightLowerSleeveRef.current = new THREE.Mesh(sleeveGeo, mat.clone());
+
+      scene.add(leftUpperSleeveRef.current);
+      scene.add(leftLowerSleeveRef.current);
+      scene.add(rightUpperSleeveRef.current);
+      scene.add(rightLowerSleeveRef.current);
     });
 
     return () => {
@@ -121,10 +137,10 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
     poseInstance.setOptions({
       modelComplexity: 1,
       smoothLandmarks: true,
-      enableSegmentation: false,
+      enableSegmentation: true,
       smoothSegmentation: true,
-      minDetectionConfidence: 0.6,
-      minTrackingConfidence: 0.6,
+      minDetectionConfidence: 0.7,
+      minTrackingConfidence: 0.7,
     });
 
     poseInstance.onResults((results) => {
@@ -135,12 +151,16 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
       const landmarks = results.poseLandmarks;
       
       const getSmooth = (idx: number) => {
-        if (!smoothers.current[idx]) smoothers.current[idx] = new EMASmoother(0.2);
+        if (!smoothers.current[idx]) smoothers.current[idx] = new EMASmoother(0.1); // Increased smoothing
         return smoothers.current[idx].smooth(landmarks[idx]);
       };
 
       const ls = getSmooth(11); // Left Shoulder
       const rs = getSmooth(12); // Right Shoulder
+      const le = getSmooth(13); // Left Elbow
+      const re = getSmooth(14); // Right Elbow
+      const lw = getSmooth(15); // Left Wrist
+      const rw = getSmooth(16); // Right Wrist
       const lh = getSmooth(23); // Left Hip
       const rh = getSmooth(24); // Right Hip
 
@@ -150,28 +170,51 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
       const shoulderWidth = Math.sqrt(Math.pow(ls.x - rs.x, 2) + Math.pow(ls.y - rs.y, 2));
       const shoulderAngle = Math.atan2(rs.y - ls.y, rs.x - ls.x);
 
-      // Torso Alignment - Refined scaling and positioning
-      // Coordinates from MediaPipe are 0-1, need to map to Three.js space
-      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 7.5 - 1.5, 0.2); // Z-index increased
+      // Torso Alignment & Mesh Warping
+      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 7.5 - 1.5, 0.2);
       torsoRef.current.rotation.z = shoulderAngle;
-      torsoRef.current.rotation.x = Math.PI; // Flip vertically to fix upside down issue
-      
-      // Scaling: shoulderWidth is typically 0.2-0.4. 
-      // Multiplier increased for better coverage.
+      torsoRef.current.rotation.x = Math.PI; // Correct orientation
       torsoRef.current.scale.set(shoulderWidth * 16, shoulderWidth * 20, 1);
+
+      // Basic Sleeve Rotation (Upper/Lower segments)
+      if (leftUpperSleeveRef.current && leftLowerSleeveRef.current) {
+        leftUpperSleeveRef.current.visible = true;
+        leftLowerSleeveRef.current.visible = true;
+
+        const angleUL = Math.atan2(le.y - ls.y, le.x - ls.x);
+        leftUpperSleeveRef.current.position.set((ls.x - 0.5) * 10, -(ls.y - 0.5) * 7.5 - 1.5, 0.21);
+        leftUpperSleeveRef.current.rotation.z = angleUL + Math.PI/2;
+        leftUpperSleeveRef.current.scale.set(shoulderWidth * 4, shoulderWidth * 6, 1);
+
+        const angleLL = Math.atan2(lw.y - le.y, lw.x - le.x);
+        leftLowerSleeveRef.current.position.set((le.x - 0.5) * 10, -(le.y - 0.5) * 7.5 - 1.5, 0.22);
+        leftLowerSleeveRef.current.rotation.z = angleLL + Math.PI/2;
+        leftLowerSleeveRef.current.scale.set(shoulderWidth * 3.5, shoulderWidth * 5, 1);
+      }
+
+      if (rightUpperSleeveRef.current && rightLowerSleeveRef.current) {
+        rightUpperSleeveRef.current.visible = true;
+        rightLowerSleeveRef.current.visible = true;
+
+        const angleUR = Math.atan2(re.y - rs.y, re.x - rs.x);
+        rightUpperSleeveRef.current.position.set((rs.x - 0.5) * 10, -(rs.y - 0.5) * 7.5 - 1.5, 0.21);
+        rightUpperSleeveRef.current.rotation.z = angleUR + Math.PI/2;
+        rightUpperSleeveRef.current.scale.set(shoulderWidth * 4, shoulderWidth * 6, 1);
+
+        const angleLR = Math.atan2(rw.y - re.y, rw.x - re.x);
+        rightLowerSleeveRef.current.position.set((re.x - 0.5) * 10, -(re.y - 0.5) * 7.5 - 1.5, 0.22);
+        rightLowerSleeveRef.current.rotation.z = angleLR + Math.PI/2;
+        rightLowerSleeveRef.current.scale.set(shoulderWidth * 3.5, shoulderWidth * 5, 1);
+      }
 
       // Size Recommendation (Rule-based engine)
       if (onSizeDetected) {
         const ratio = shoulderWidth;
         let size = "M";
         let note = "Standard fit";
-
         if (ratio < 0.25) { size = "S"; note = "Fitted look recommended"; }
         else if (ratio > 0.35) { size = "XL"; note = "Relaxed fit for comfort"; }
         else if (ratio > 0.30) { size = "L"; note = "True to size"; }
-        
-        setCurrentSize(size);
-        setCurrentNote(note);
         onSizeDetected(size, note);
       }
 
