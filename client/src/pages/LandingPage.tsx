@@ -3,12 +3,17 @@ import { Link } from "wouter";
 import { ArrowRight, Shield, Zap, ShoppingCart, Heart, User, Search as SearchIcon, ChevronDown, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { VirtualTryOn } from "@/components/VirtualTryOn";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
+
 // Import asset paths directly to ensure they are available
 import logoImg from "@assets/WhatsApp_Image_2026-01-13_at_4.42.21_PM-Photoroom_1768302850224.png";
 import fullSleeveFrontImg from "@/assets/tshirt-full-sleeve-front-v3.png";
@@ -32,11 +37,64 @@ const FULL_SLEEVE_TSHIRTS = [
 
 export default function LandingPage() {
   const [selectedVariant, setSelectedVariant] = useState(HALF_SLEEVE_TSHIRTS[0]);
+  const [detectedSize, setDetectedSize] = useState<string | null>(null);
+  const [fitNote, setFitNote] = useState<string | null>(null);
+  const [showTryOn, setShowTryOn] = useState(false);
 
   const allTshirts = [...HALF_SLEEVE_TSHIRTS, ...FULL_SLEEVE_TSHIRTS];
 
   return (
     <div className="min-h-screen bg-white text-black">
+      {/* Full Screen Try-On Overlay */}
+      <AnimatePresence>
+        {showTryOn && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center"
+          >
+            <div className="absolute top-6 right-6 z-[110] flex gap-4">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="rounded-full bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-md px-6 font-bold"
+                onClick={() => setShowTryOn(false)}
+              >
+                <X className="mr-2 w-5 h-5" />
+                EXIT TRY-ON
+              </Button>
+            </div>
+            
+            <div className="w-full h-full max-w-5xl mx-auto p-4 md:p-8 flex flex-col justify-center">
+              <VirtualTryOn 
+                garmentUrl={selectedVariant.image} 
+                onSizeDetected={(size, note) => {
+                  setDetectedSize(size);
+                  setFitNote(note);
+                }}
+              />
+            </div>
+
+            {detectedSize && (
+              <motion.div 
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                className="absolute top-24 right-6 z-[110] bg-white/10 backdrop-blur-xl border border-white/20 p-4 rounded-2xl flex items-center gap-3 text-white max-w-xs"
+              >
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0">
+                  <User className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">AI Fit Recommendation</p>
+                  <p className="text-sm font-bold">{detectedSize} — {fitNote || 'Perfect Fit'}</p>
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <header className="border-b border-black/5 sticky top-0 z-50 bg-white/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between">
@@ -103,12 +161,14 @@ export default function LandingPage() {
               
               {/* Try On Button Overlay */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/5 backdrop-blur-[2px]">
-                <Link href={`/try-on?type=${selectedVariant.type}`}>
-                  <Button size="lg" className="rounded-full px-8 py-6 h-auto text-lg font-bold shadow-2xl bg-black text-white hover:bg-black/90 hover-elevate active-elevate-2">
-                    <Zap className="mr-2 w-6 h-6 fill-current text-white" />
-                    TRY ON NOW
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  className="rounded-full px-8 py-6 h-auto text-lg font-bold shadow-2xl bg-black text-white hover:bg-black/90 hover-elevate active-elevate-2"
+                  onClick={() => setShowTryOn(true)}
+                >
+                  <Zap className="mr-2 w-6 h-6 fill-current text-white" />
+                  TRY ON NOW
+                </Button>
               </div>
             </div>
 
@@ -194,6 +254,18 @@ export default function LandingPage() {
               <span className="text-lg text-muted-foreground line-through">₹4,999.00</span>
               <Badge variant="destructive" className="rounded-full bg-red-100 text-red-600 border-none font-bold">25% OFF</Badge>
             </div>
+
+            {detectedSize && (
+              <div className="flex items-center gap-3 p-4 rounded-2xl bg-primary/5 border border-primary/10">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <User className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-primary/60">AI Recommended Size</p>
+                  <p className="text-sm font-bold text-primary">{detectedSize} — {fitNote || 'Perfect Fit'}</p>
+                </div>
+              </div>
+            )}
 
             <div className="space-y-6">
               <div className="space-y-3">
