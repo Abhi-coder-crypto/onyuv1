@@ -165,10 +165,14 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
       const shoulderAngle = Math.atan2(rs.y - ls.y, rs.x - ls.x);
 
       // Torso Alignment & Mesh Warping
-      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 7.5 - 1.5, 0.2);
+      // Coordinates from MediaPipe are 0-1, need to map to Three.js space
+      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 7.5 - 1.2, 0.2);
       torsoRef.current.rotation.z = shoulderAngle;
       torsoRef.current.rotation.x = Math.PI; // Correct orientation
-      torsoRef.current.scale.set(shoulderWidth * 20, shoulderWidth * 25, 1);
+      
+      // Dynamic Scaling based on shoulder width and torso height
+      const torsoHeight = Math.sqrt(Math.pow(((lh.x + rh.x)/2) - centerX, 2) + Math.pow(((lh.y + rh.y)/2) - centerY, 2));
+      torsoRef.current.scale.set(shoulderWidth * 14, torsoHeight * 12, 1);
 
       // Sleeves are handled by the main torso texture for better stability
       // and to prevent detached sleeve artifacts
