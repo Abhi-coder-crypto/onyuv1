@@ -152,13 +152,12 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
 
       // Torso Alignment - Refined scaling and positioning
       // Coordinates from MediaPipe are 0-1, need to map to Three.js space
-      // Standard video is 4:3 or 16:9. We assume 640x480 for mapping logic.
-      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 7.5 - 1.5, 0.1);
+      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 7.5 - 1.5, 0.2); // Z-index increased
       torsoRef.current.rotation.z = shoulderAngle;
       
       // Scaling: shoulderWidth is typically 0.2-0.4. 
       // Multiplier increased for better coverage.
-      torsoRef.current.scale.set(shoulderWidth * 20, shoulderWidth * 25, 1);
+      torsoRef.current.scale.set(shoulderWidth * 16, shoulderWidth * 20, 1);
 
       // Size Recommendation (Rule-based engine)
       if (onSizeDetected) {
