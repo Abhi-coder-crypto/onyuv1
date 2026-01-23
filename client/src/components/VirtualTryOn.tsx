@@ -4,7 +4,9 @@ import * as cam from "@mediapipe/camera_utils";
 import * as THREE from "three";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Camera, Upload, RotateCcw } from "lucide-react";
+import { Loader2, Camera, Upload, RotateCcw, Check } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 interface TryOnProps {
   garmentUrl: string;
@@ -36,7 +38,13 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const threeCanvasRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [mode, setMode] = useState<"photo" | "live">("live");
+  const { toast } = useToast();
+
+  // State for detection
+  const [currentSize, setCurrentSize] = useState<string>("M");
+  const [currentNote, setCurrentNote] = useState<string>("");
 
   // Three.js State
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -169,6 +177,8 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
           note = "True to size";
         }
 
+        setCurrentSize(size);
+        setCurrentNote(note);
         onSizeDetected(size, note);
       }
 
@@ -189,6 +199,42 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
     }
   }, [mode, onSizeDetected]);
 
+  const handleSaveSession = async () => {
+    if (!videoRef.current || isSaving) return;
+    
+    setIsSaving(true);
+    try {
+      // Capture frame
+      const canvas = document.createElement("canvas");
+      canvas.width = 640;
+      canvas.height = 480;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(videoRef.current, 0, 0);
+        const base64 = canvas.toDataURL("image/jpeg");
+        
+        await apiRequest("POST", "/api/try-on/session", {
+          userPhotoBase64: base64,
+          detectedSize: currentSize,
+          confidenceScore: "0.95",
+        });
+
+        toast({
+          title: "Session Saved",
+          description: "Your try-on photo has been uploaded to Cloudinary.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save session.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <Card className="relative overflow-hidden aspect-video bg-black flex items-center justify-center">
       {isLoading && (
@@ -208,7 +254,20 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
             <Upload className="w-4 h-4 mr-2" /> Photo
           </Button>
         </div>
-        <Button variant="outline" size="icon"><RotateCcw className="w-4 h-4" /></Button>
+        
+        <div className="flex gap-2">
+          <Button 
+            variant="default" 
+            size="sm" 
+            className="bg-green-600 hover:bg-green-700"
+            onClick={handleSaveSession}
+            disabled={isSaving}
+          >
+            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
+            Save to Cloudinary
+          </Button>
+          <Button variant="outline" size="icon"><RotateCcw className="w-4 h-4" /></Button>
+        </div>
       </div>
     </Card>
   );

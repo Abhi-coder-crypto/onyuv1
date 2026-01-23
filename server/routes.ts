@@ -3,6 +3,7 @@ import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
+import { uploadToCloudinary } from "./cloudinary";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -44,9 +45,20 @@ export async function registerRoutes(
 
   app.post("/api/try-on/session", async (req, res) => {
     try {
-      const session = await storage.createTryOnSession(req.body);
+      const { userPhotoBase64, ...sessionData } = req.body;
+      let userPhotoUrl = sessionData.userPhotoUrl;
+
+      if (userPhotoBase64) {
+        userPhotoUrl = await uploadToCloudinary(userPhotoBase64);
+      }
+
+      const session = await storage.createTryOnSession({
+        ...sessionData,
+        userPhotoUrl,
+      });
       res.status(201).json(session);
     } catch (err) {
+      console.error("Session creation error:", err);
       res.status(400).json({ message: "Could not create session" });
     }
   });
