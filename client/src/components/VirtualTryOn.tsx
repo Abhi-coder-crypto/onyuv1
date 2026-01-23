@@ -18,7 +18,7 @@ class EMASmoother {
   private alpha: number;
   private value: { x: number; y: number; z: number } | null = null;
 
-  constructor(alpha: number = 0.3) {
+  constructor(alpha: number = 0.15) { // Lower alpha for more smoothing
     this.alpha = alpha;
   }
 
@@ -26,6 +26,7 @@ class EMASmoother {
     if (!this.value) {
       this.value = { ...next };
     } else {
+      // Basic EMA smoothing
       this.value.x = this.alpha * next.x + (1 - this.alpha) * this.value.x;
       this.value.y = this.alpha * next.y + (1 - this.alpha) * this.value.y;
       this.value.z = this.alpha * next.z + (1 - this.alpha) * this.value.z;
@@ -121,8 +122,10 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
     poseInstance.setOptions({
       modelComplexity: 1,
       smoothLandmarks: true,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5,
+      enableSegmentation: false,
+      smoothSegmentation: true,
+      minDetectionConfidence: 0.7, // Higher confidence for less jitter
+      minTrackingConfidence: 0.7,
     });
 
     poseInstance.onResults((results) => {
@@ -133,7 +136,7 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
       const landmarks = results.poseLandmarks;
       
       const getSmooth = (idx: number) => {
-        if (!smoothers.current[idx]) smoothers.current[idx] = new EMASmoother(0.2);
+        if (!smoothers.current[idx]) smoothers.current[idx] = new EMASmoother(0.15); // Consistent low alpha
         return smoothers.current[idx].smooth(landmarks[idx]);
       };
 
@@ -147,14 +150,16 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
       // Calculate Torso metrics
       const centerX = (ls.x + rs.x) / 2;
       const centerY = (ls.y + rs.y) / 2;
-      const shoulderWidth = Math.abs(ls.x - rs.x);
-      const torsoHeight = Math.abs((lh.y + rh.y)/2 - centerY);
+      const shoulderWidth = Math.sqrt(Math.pow(ls.x - rs.x, 2) + Math.pow(ls.y - rs.y, 2));
+      
+      // Calculate rotation to match shoulder line
+      const shoulderAngle = Math.atan2(rs.y - ls.y, rs.x - ls.x);
 
       // Alignment: Shirt should start at shoulders and extend past hips
-      // Scaling adjusted for better fit (not too long)
-      // Stability: Torso centering and z-index adjustment
-      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 8 - 0.5, 0.05);
-      torsoRef.current.scale.set(shoulderWidth * 6, shoulderWidth * 8, 1);
+      // Scaling adjusted for better fit
+      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 8 - 1.2, 0.05);
+      torsoRef.current.rotation.z = shoulderAngle;
+      torsoRef.current.scale.set(shoulderWidth * 12, shoulderWidth * 16, 1);
 
       // Sleeves are now handled as part of the main torso texture for stability
       if (leftUpperSleeveRef.current) leftUpperSleeveRef.current.visible = false;
