@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { ArrowRight, Shield, Zap, ShoppingCart, Heart, User, Search as SearchIcon, ChevronDown, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { VirtualTryOn } from "@/components/VirtualTryOn";
 import {
   Accordion,
   AccordionContent,
@@ -36,6 +37,8 @@ const FULL_SLEEVE_SHIRTS = [
 
 export default function ShirtLandingPage() {
   const [selectedVariant, setSelectedVariant] = useState(HALF_SLEEVE_SHIRTS[0]);
+  const [detectedSize, setDetectedSize] = useState<string | null>(null);
+  const [showTryOn, setShowTryOn] = useState(false);
 
   return (
     <div className="min-h-screen bg-white text-black">
@@ -97,21 +100,42 @@ export default function ShirtLandingPage() {
           {/* Left: Product Images */}
           <div className="lg:col-span-7 space-y-6">
             <div className="relative group bg-zinc-100 rounded-3xl overflow-hidden aspect-[4/5] flex items-center justify-center border border-black/5">
-              <img 
-                src={selectedVariant.image} 
-                alt="Product main view" 
-                className="w-full h-full object-contain p-12 transition-transform duration-700 group-hover:scale-105"
-              />
-              
-              {/* Try On Button Overlay */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/5 backdrop-blur-[2px]">
-                <Link href={`/try-on-shirt?type=${selectedVariant.type}`}>
-                  <Button size="lg" className="rounded-full px-8 py-6 h-auto text-lg font-bold shadow-2xl bg-black text-white hover:bg-black/90 hover-elevate active-elevate-2">
-                    <Zap className="mr-2 w-6 h-6 fill-current text-white" />
-                    TRY ON NOW
+              {showTryOn ? (
+                <div className="w-full h-full">
+                   <VirtualTryOn 
+                    garmentUrl={selectedVariant.image} 
+                    onSizeDetected={setDetectedSize}
+                  />
+                  <Button 
+                    variant="secondary" 
+                    size="sm" 
+                    className="absolute top-4 right-4 z-30 rounded-full"
+                    onClick={() => setShowTryOn(false)}
+                  >
+                    Close Try-On
                   </Button>
-                </Link>
-              </div>
+                </div>
+              ) : (
+                <>
+                  <img 
+                    src={selectedVariant.image} 
+                    alt="Product main view" 
+                    className="w-full h-full object-contain p-12 transition-transform duration-700 group-hover:scale-105"
+                  />
+                  
+                  {/* Try On Button Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/5 backdrop-blur-[2px]">
+                    <Button 
+                      size="lg" 
+                      className="rounded-full px-8 py-6 h-auto text-lg font-bold shadow-2xl bg-black text-white hover:bg-black/90 hover-elevate active-elevate-2"
+                      onClick={() => setShowTryOn(true)}
+                    >
+                      <Zap className="mr-2 w-6 h-6 fill-current text-white" />
+                      TRY ON NOW
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Thumbnails */}
@@ -196,6 +220,18 @@ export default function ShirtLandingPage() {
               <span className="text-lg text-muted-foreground line-through">₹5,999.00</span>
               <Badge variant="destructive" className="rounded-full bg-red-100 text-red-600 border-none font-bold">29% OFF</Badge>
             </div>
+
+            {detectedSize && (
+              <div className="flex items-center gap-3 p-4 rounded-2xl bg-primary/5 border border-primary/10">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <User className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-primary/60">AI Recommended Size</p>
+                  <p className="text-sm font-bold text-primary">{detectedSize} — Perfect Fit</p>
+                </div>
+              </div>
+            )}
 
             <div className="space-y-6">
               <div className="space-y-3">
