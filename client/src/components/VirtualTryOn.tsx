@@ -154,6 +154,7 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
       // Coordinates from MediaPipe are 0-1, need to map to Three.js space
       torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 7.5 - 1.5, 0.2); // Z-index increased
       torsoRef.current.rotation.z = shoulderAngle;
+      torsoRef.current.rotation.x = Math.PI; // Flip vertically to fix upside down issue
       
       // Scaling: shoulderWidth is typically 0.2-0.4. 
       // Multiplier increased for better coverage.
