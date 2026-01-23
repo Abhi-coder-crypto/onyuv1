@@ -171,8 +171,9 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
       torsoRef.current.rotation.x = Math.PI; // Correct orientation
       
       // Dynamic Scaling based on shoulder width and torso height
+      // Using a broader multiplier to cover the chest and arms correctly
       const torsoHeight = Math.sqrt(Math.pow(((lh.x + rh.x)/2) - centerX, 2) + Math.pow(((lh.y + rh.y)/2) - centerY, 2));
-      torsoRef.current.scale.set(shoulderWidth * 14, torsoHeight * 12, 1);
+      torsoRef.current.scale.set(shoulderWidth * 25, torsoHeight * 18, 1);
 
       // Sleeves are handled by the main torso texture for better stability
       // and to prevent detached sleeve artifacts
