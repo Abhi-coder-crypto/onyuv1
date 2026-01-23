@@ -78,16 +78,16 @@ export default function ShirtLandingPage() {
 
             {detectedSize && (
               <motion.div 
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[110] bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-3xl flex items-center gap-4 text-white"
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                className="absolute top-24 right-6 z-[110] bg-white/10 backdrop-blur-xl border border-white/20 p-4 rounded-2xl flex items-center gap-3 text-white max-w-xs"
               >
-                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
-                  <User className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0">
+                  <User className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-white/60">AI Fit Recommendation</p>
-                  <p className="text-xl font-bold">{detectedSize} — {fitNote || 'Perfect Fit'}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">AI Fit Recommendation</p>
+                  <p className="text-sm font-bold">{detectedSize} — {fitNote || 'Perfect Fit'}</p>
                 </div>
               </motion.div>
             )}

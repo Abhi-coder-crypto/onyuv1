@@ -153,20 +153,23 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
       const centerY = (ls.y + rs.y) / 2;
       const shoulderWidth = Math.abs(ls.x - rs.x);
 
-      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 8, 0);
-      torsoRef.current.scale.set(shoulderWidth * 8, shoulderWidth * 8, 1);
+      // Adjust positioning and scaling for better fit
+      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 8 - 1.5, 0);
+      torsoRef.current.scale.set(shoulderWidth * 12, shoulderWidth * 12, 1);
 
       // Sleeve Rotation Logic
       if (leftUpperSleeveRef.current && rightUpperSleeveRef.current) {
         // Left Sleeve Rotation (Shoulder to Elbow)
         const leftAngle = Math.atan2(le.y - ls.y, le.x - ls.x);
-        leftUpperSleeveRef.current.position.set((ls.x - 0.5) * 10, -(ls.y - 0.5) * 8, 0.1);
+        leftUpperSleeveRef.current.position.set((ls.x - 0.5) * 10, -(ls.y - 0.5) * 8 - 0.5, 0.1);
         leftUpperSleeveRef.current.rotation.z = leftAngle + Math.PI / 2;
+        leftUpperSleeveRef.current.scale.set(shoulderWidth * 4, shoulderWidth * 6, 1);
 
         // Right Sleeve Rotation
         const rightAngle = Math.atan2(re.y - rs.y, re.x - rs.x);
-        rightUpperSleeveRef.current.position.set((rs.x - 0.5) * 10, -(rs.y - 0.5) * 8, 0.1);
+        rightUpperSleeveRef.current.position.set((rs.x - 0.5) * 10, -(rs.y - 0.5) * 8 - 0.5, 0.1);
         rightUpperSleeveRef.current.rotation.z = rightAngle + Math.PI / 2;
+        rightUpperSleeveRef.current.scale.set(shoulderWidth * 4, shoulderWidth * 6, 1);
       }
 
       // Advanced Size Detection
@@ -263,8 +266,8 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
           <Button variant={mode === "live" ? "default" : "secondary"} size="sm" onClick={() => setMode("live")}>
             <Camera className="w-4 h-4 mr-2" /> Live
           </Button>
-          <Button variant={mode === "photo" ? "default" : "secondary"} size="sm" onClick={() => setMode("photo")}>
-            <Upload className="w-4 h-4 mr-2" /> Photo
+          <Button variant={mode === "photo" ? "default" : "secondary"} size="sm" onClick={() => setMode("photo")} title="Upload your own photo for try-on">
+            <Upload className="w-4 h-4 mr-2" /> Try with Photo
           </Button>
         </div>
         
