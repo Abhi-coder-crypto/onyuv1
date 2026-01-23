@@ -136,7 +136,62 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
       if (!active) return;
       setIsLoading(false);
       if (!results.poseLandmarks || !torsoRef.current) return;
-      // ... rest of results logic ...
+
+      const landmarks = results.poseLandmarks;
+      
+      const getSmooth = (idx: number) => {
+        if (!smoothers.current[idx]) smoothers.current[idx] = new EMASmoother(0.2);
+        return smoothers.current[idx].smooth(landmarks[idx]);
+      };
+
+      const ls = getSmooth(11); // Left Shoulder
+      const rs = getSmooth(12); // Right Shoulder
+      const le = getSmooth(13); // Left Elbow
+      const re = getSmooth(14); // Right Elbow
+      const lh = getSmooth(23); // Left Hip
+      const rh = getSmooth(24); // Right Hip
+
+      // Calculate Torso metrics
+      const centerX = (ls.x + rs.x) / 2;
+      const centerY = (ls.y + rs.y) / 2;
+      const shoulderWidth = Math.abs(ls.x - rs.x);
+      const torsoHeight = Math.abs((lh.y + rh.y)/2 - centerY);
+
+      // Alignment: Shirt should start at shoulders and extend past hips
+      // Scaling increased to 18 for full torso coverage
+      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 8 - 1.8, 0);
+      torsoRef.current.scale.set(shoulderWidth * 18, shoulderWidth * 22, 1);
+
+      if (leftUpperSleeveRef.current && rightUpperSleeveRef.current) {
+        // Left Sleeve
+        const leftAngle = Math.atan2(le.y - ls.y, le.x - ls.x);
+        leftUpperSleeveRef.current.position.set((ls.x - 0.5) * 10, -(ls.y - 0.5) * 8 - 0.4, 0.1);
+        leftUpperSleeveRef.current.rotation.z = leftAngle + Math.PI / 2;
+        leftUpperSleeveRef.current.scale.set(shoulderWidth * 7, shoulderWidth * 10, 1);
+
+        // Right Sleeve
+        const rightAngle = Math.atan2(re.y - rs.y, re.x - rs.x);
+        rightUpperSleeveRef.current.position.set((rs.x - 0.5) * 10, -(rs.y - 0.5) * 8 - 0.4, 0.1);
+        rightUpperSleeveRef.current.rotation.z = rightAngle + Math.PI / 2;
+        rightUpperSleeveRef.current.scale.set(shoulderWidth * 7, shoulderWidth * 10, 1);
+      }
+
+      // Size Recommendation
+      if (onSizeDetected) {
+        let size = "M";
+        let note = "Standard fit";
+        if (shoulderWidth < 0.22) { size = "S"; note = "Fitted look recommended"; }
+        else if (shoulderWidth > 0.32) { size = "XL"; note = "Relaxed fit for comfort"; }
+        else if (shoulderWidth > 0.28) { size = "L"; note = "True to size"; }
+        
+        setCurrentSize(size);
+        setCurrentNote(note);
+        onSizeDetected(size, note);
+      }
+
+      if (rendererRef.current && sceneRef.current && cameraRef.current) {
+        rendererRef.current.render(sceneRef.current, cameraRef.current);
+      }
     });
 
     let camera: cam.Camera | null = null;
