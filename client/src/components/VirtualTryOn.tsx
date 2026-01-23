@@ -256,7 +256,7 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
           <p className="text-sm text-muted-foreground">Initializing AR Engine...</p>
         </div>
       )}
-      <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover grayscale opacity-40" playsInline />
+      <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover" playsInline />
       <div ref={threeCanvasRef} className="absolute inset-0 z-10 pointer-events-none" />
       <div className="absolute bottom-4 left-4 right-4 flex justify-between gap-2 z-20">
         <div className="flex gap-2">
