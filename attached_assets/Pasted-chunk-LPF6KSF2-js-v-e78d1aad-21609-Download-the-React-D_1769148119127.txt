@@ -1,0 +1,183 @@
+chunk-LPF6KSF2.js?v=e78d1aad:21609 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148014.770000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148014.782000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 W0000 00:00:1769148014.783000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148016.390000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148016.400000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 W0000 00:00:1769148016.401000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148040.073000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148040.096000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 W0000 00:00:1769148040.097000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148042.553000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148042.575000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 W0000 00:00:1769148042.576000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148052.634000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148052.645000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 W0000 00:00:1769148052.646000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148082.343000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148082.358000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 W0000 00:00:1769148082.358000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148085.505000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148085.515000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+VM558 pose_solution_simd_wasm_bin.js:9 W0000 00:00:1769148085.516000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ VM558 pose_solution_simd_wasm_bin.js:9
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148112.481000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3
+put_char @ pose_solution_simd_wasm_bin.js:9
+write @ pose_solution_simd_wasm_bin.js:9
+write @ pose_solution_simd_wasm_bin.js:9
+doWritev @ pose_solution_simd_wasm_bin.js:9
+_fd_write @ pose_solution_simd_wasm_bin.js:9
+$func8240 @ pose_solution_simd_wasm_bin.wasm:0x51510e
+$func8250 @ pose_solution_simd_wasm_bin.wasm:0x51587f
+$func8251 @ pose_solution_simd_wasm_bin.wasm:0x51592a
+$func7869 @ pose_solution_simd_wasm_bin.wasm:0x4e9bc2
+$func7868 @ pose_solution_simd_wasm_bin.wasm:0x4e9ba1
+$func7866 @ pose_solution_simd_wasm_bin.wasm:0x4e984d
+$func7847 @ pose_solution_simd_wasm_bin.wasm:0x4e8464
+$func7846 @ pose_solution_simd_wasm_bin.wasm:0x4e76e4
+$func7070 @ pose_solution_simd_wasm_bin.wasm:0x4a68f1
+$func6557 @ pose_solution_simd_wasm_bin.wasm:0x469140
+$func6352 @ pose_solution_simd_wasm_bin.wasm:0x4544e7
+$func251 @ pose_solution_simd_wasm_bin.wasm:0x1d898
+$func221 @ pose_solution_simd_wasm_bin.wasm:0x19049
+(anonymous) @ pose_solution_simd_wasm_bin.js:9
+(anonymous) @ @mediapipe_pose.js?v=e78d1aad:2123
+ua @ @mediapipe_pose.js?v=e78d1aad:193
+next @ @mediapipe_pose.js?v=e78d1aad:210
+b @ @mediapipe_pose.js?v=e78d1aad:227
+Promise.then
+g @ @mediapipe_pose.js?v=e78d1aad:234
+Promise.then
+g @ @mediapipe_pose.js?v=e78d1aad:234
+(anonymous) @ @mediapipe_pose.js?v=e78d1aad:236
+wa @ @mediapipe_pose.js?v=e78d1aad:232
+E @ @mediapipe_pose.js?v=e78d1aad:240
+x.send @ @mediapipe_pose.js?v=e78d1aad:2030
+(anonymous) @ @mediapipe_pose.js?v=e78d1aad:2303
+ua @ @mediapipe_pose.js?v=e78d1aad:193
+next @ @mediapipe_pose.js?v=e78d1aad:210
+(anonymous) @ @mediapipe_pose.js?v=e78d1aad:236
+wa @ @mediapipe_pose.js?v=e78d1aad:232
+E @ @mediapipe_pose.js?v=e78d1aad:240
+x.send @ @mediapipe_pose.js?v=e78d1aad:2302
+onFrame @ VirtualTryOn.tsx:208
+Q @ @mediapipe_camera_utils.js?v=e78d1aad:448
+(anonymous) @ @mediapipe_camera_utils.js?v=e78d1aad:435
+requestAnimationFrame
+P @ @mediapipe_camera_utils.js?v=e78d1aad:434
+O.a.video.onloadedmetadata @ @mediapipe_camera_utils.js?v=e78d1aad:443
+pose_solution_simd_wasm_bin.js:9 I0000 00:00:1769148112.487000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)))
+put_char @ pose_solution_simd_wasm_bin.js:9
+write @ pose_solution_simd_wasm_bin.js:9
+write @ pose_solution_simd_wasm_bin.js:9
+doWritev @ pose_solution_simd_wasm_bin.js:9
+_fd_write @ pose_solution_simd_wasm_bin.js:9
+$func8240 @ pose_solution_simd_wasm_bin.wasm:0x51510e
+$func8250 @ pose_solution_simd_wasm_bin.wasm:0x51587f
+$func8251 @ pose_solution_simd_wasm_bin.wasm:0x51592a
+$func7869 @ pose_solution_simd_wasm_bin.wasm:0x4e9bc2
+$func7868 @ pose_solution_simd_wasm_bin.wasm:0x4e9ba1
+$func7866 @ pose_solution_simd_wasm_bin.wasm:0x4e984d
+$func7847 @ pose_solution_simd_wasm_bin.wasm:0x4e8464
+$func7846 @ pose_solution_simd_wasm_bin.wasm:0x4e76e4
+$func7015 @ pose_solution_simd_wasm_bin.wasm:0x4a4c16
+$func6943 @ pose_solution_simd_wasm_bin.wasm:0x4a2623
+$func6942 @ pose_solution_simd_wasm_bin.wasm:0x4a24f1
+$func7070 @ pose_solution_simd_wasm_bin.wasm:0x4a69a4
+$func6557 @ pose_solution_simd_wasm_bin.wasm:0x469140
+$func6352 @ pose_solution_simd_wasm_bin.wasm:0x4544e7
+$func251 @ pose_solution_simd_wasm_bin.wasm:0x1d898
+$func221 @ pose_solution_simd_wasm_bin.wasm:0x19049
+(anonymous) @ pose_solution_simd_wasm_bin.js:9
+(anonymous) @ @mediapipe_pose.js?v=e78d1aad:2123
+ua @ @mediapipe_pose.js?v=e78d1aad:193
+next @ @mediapipe_pose.js?v=e78d1aad:210
+b @ @mediapipe_pose.js?v=e78d1aad:227
+Promise.then
+g @ @mediapipe_pose.js?v=e78d1aad:234
+Promise.then
+g @ @mediapipe_pose.js?v=e78d1aad:234
+(anonymous) @ @mediapipe_pose.js?v=e78d1aad:236
+wa @ @mediapipe_pose.js?v=e78d1aad:232
+E @ @mediapipe_pose.js?v=e78d1aad:240
+x.send @ @mediapipe_pose.js?v=e78d1aad:2030
+(anonymous) @ @mediapipe_pose.js?v=e78d1aad:2303
+ua @ @mediapipe_pose.js?v=e78d1aad:193
+next @ @mediapipe_pose.js?v=e78d1aad:210
+(anonymous) @ @mediapipe_pose.js?v=e78d1aad:236
+wa @ @mediapipe_pose.js?v=e78d1aad:232
+E @ @mediapipe_pose.js?v=e78d1aad:240
+x.send @ @mediapipe_pose.js?v=e78d1aad:2302
+onFrame @ VirtualTryOn.tsx:208
+Q @ @mediapipe_camera_utils.js?v=e78d1aad:448
+(anonymous) @ @mediapipe_camera_utils.js?v=e78d1aad:435
+requestAnimationFrame
+P @ @mediapipe_camera_utils.js?v=e78d1aad:434
+O.a.video.onloadedmetadata @ @mediapipe_camera_utils.js?v=e78d1aad:443
+pose_solution_simd_wasm_bin.js:9 W0000 00:00:1769148112.488000       1 gl_context.cc:1000] OpenGL error checking is disabled
+put_char @ pose_solution_simd_wasm_bin.js:9
+write @ pose_solution_simd_wasm_bin.js:9
+write @ pose_solution_simd_wasm_bin.js:9
+doWritev @ pose_solution_simd_wasm_bin.js:9
+_fd_write @ pose_solution_simd_wasm_bin.js:9
+$func8240 @ pose_solution_simd_wasm_bin.wasm:0x51510e
+$func8250 @ pose_solution_simd_wasm_bin.wasm:0x51587f
+$func8251 @ pose_solution_simd_wasm_bin.wasm:0x51592a
+$func7869 @ pose_solution_simd_wasm_bin.wasm:0x4e9bc2
+$func7868 @ pose_solution_simd_wasm_bin.wasm:0x4e9ba1
+$func7866 @ pose_solution_simd_wasm_bin.wasm:0x4e984d
+$func7847 @ pose_solution_simd_wasm_bin.wasm:0x4e8464
+$func7846 @ pose_solution_simd_wasm_bin.wasm:0x4e76e4
+$func6943 @ pose_solution_simd_wasm_bin.wasm:0x4a2687
+$func6942 @ pose_solution_simd_wasm_bin.wasm:0x4a24f1
+$func7070 @ pose_solution_simd_wasm_bin.wasm:0x4a69a4
+$func6557 @ pose_solution_simd_wasm_bin.wasm:0x469140
+$func6352 @ pose_solution_simd_wasm_bin.wasm:0x4544e7
+$func251 @ pose_solution_simd_wasm_bin.wasm:0x1d898
+$func221 @ pose_solution_simd_wasm_bin.wasm:0x19049
+(anonymous) @ pose_solution_simd_wasm_bin.js:9
+(anonymous) @ @mediapipe_pose.js?v=e78d1aad:2123
+ua @ @mediapipe_pose.js?v=e78d1aad:193
+next @ @mediapipe_pose.js?v=e78d1aad:210
+b @ @mediapipe_pose.js?v=e78d1aad:227
+Promise.then
+g @ @mediapipe_pose.js?v=e78d1aad:234
+Promise.then
+g @ @mediapipe_pose.js?v=e78d1aad:234
+(anonymous) @ @mediapipe_pose.js?v=e78d1aad:236
+wa @ @mediapipe_pose.js?v=e78d1aad:232
+E @ @mediapipe_pose.js?v=e78d1aad:240
+x.send @ @mediapipe_pose.js?v=e78d1aad:2030
+(anonymous) @ @mediapipe_pose.js?v=e78d1aad:2303
+ua @ @mediapipe_pose.js?v=e78d1aad:193
+next @ @mediapipe_pose.js?v=e78d1aad:210
+(anonymous) @ @mediapipe_pose.js?v=e78d1aad:236
+wa @ @mediapipe_pose.js?v=e78d1aad:232
+E @ @mediapipe_pose.js?v=e78d1aad:240
+x.send @ @mediapipe_pose.js?v=e78d1aad:2302
+onFrame @ VirtualTryOn.tsx:208
+Q @ @mediapipe_camera_utils.js?v=e78d1aad:448
+(anonymous) @ @mediapipe_camera_utils.js?v=e78d1aad:435
+requestAnimationFrame
+P @ @mediapipe_camera_utils.js?v=e78d1aad:434
+O.a.video.onloadedmetadata @ @mediapipe_camera_utils.js?v=e78d1aad:443
