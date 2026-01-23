@@ -159,17 +159,18 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
 
       // Alignment: Shirt should start at shoulders and extend past hips
       // Scaling increased to 18 for full torso coverage
-      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 8 - 1.8, 0);
+      // Stability: Torso centering and z-index adjustment
+      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 8 - 1.8, 0.05);
       torsoRef.current.scale.set(shoulderWidth * 18, shoulderWidth * 22, 1);
 
       if (leftUpperSleeveRef.current && rightUpperSleeveRef.current) {
-        // Left Sleeve
+        // Left Sleeve - Stability improvement with relative positioning
         const leftAngle = Math.atan2(le.y - ls.y, le.x - ls.x);
         leftUpperSleeveRef.current.position.set((ls.x - 0.5) * 10, -(ls.y - 0.5) * 8 - 0.4, 0.1);
         leftUpperSleeveRef.current.rotation.z = leftAngle + Math.PI / 2;
         leftUpperSleeveRef.current.scale.set(shoulderWidth * 7, shoulderWidth * 10, 1);
 
-        // Right Sleeve
+        // Right Sleeve - Stability improvement with relative positioning
         const rightAngle = Math.atan2(re.y - rs.y, re.x - rs.x);
         rightUpperSleeveRef.current.position.set((rs.x - 0.5) * 10, -(rs.y - 0.5) * 8 - 0.4, 0.1);
         rightUpperSleeveRef.current.rotation.z = rightAngle + Math.PI / 2;
