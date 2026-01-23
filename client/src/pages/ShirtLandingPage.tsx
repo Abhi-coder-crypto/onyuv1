@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Shield, Zap, ShoppingCart, Heart, User, Search as SearchIcon, ChevronDown, Star, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -43,6 +43,11 @@ export default function ShirtLandingPage() {
   const [fitNote, setFitNote] = useState<string | null>(null);
   const [showTryOn, setShowTryOn] = useState(false);
 
+  const handleSizeDetected = useCallback((size: string, note: string) => {
+    setDetectedSize(size);
+    setFitNote(note);
+  }, []);
+
   return (
     <div className="min-h-screen bg-white text-black">
       {/* Full Screen Try-On Overlay */}
@@ -69,10 +74,7 @@ export default function ShirtLandingPage() {
             <div className="w-full h-full max-w-5xl mx-auto p-4 md:p-8 flex flex-col justify-center">
               <VirtualTryOn 
                 garmentUrl={selectedVariant.image} 
-                onSizeDetected={(size, note) => {
-                  setDetectedSize(size);
-                  setFitNote(note);
-                }}
+                onSizeDetected={handleSizeDetected}
               />
             </div>
 
