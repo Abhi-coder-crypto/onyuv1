@@ -38,6 +38,7 @@ const FULL_SLEEVE_SHIRTS = [
 export default function ShirtLandingPage() {
   const [selectedVariant, setSelectedVariant] = useState(HALF_SLEEVE_SHIRTS[0]);
   const [detectedSize, setDetectedSize] = useState<string | null>(null);
+  const [fitNote, setFitNote] = useState<string | null>(null);
   const [showTryOn, setShowTryOn] = useState(false);
 
   return (
@@ -104,7 +105,10 @@ export default function ShirtLandingPage() {
                 <div className="w-full h-full">
                    <VirtualTryOn 
                     garmentUrl={selectedVariant.image} 
-                    onSizeDetected={setDetectedSize}
+                    onSizeDetected={(size, note) => {
+                      setDetectedSize(size);
+                      setFitNote(note);
+                    }}
                   />
                   <Button 
                     variant="secondary" 
@@ -228,7 +232,7 @@ export default function ShirtLandingPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-primary/60">AI Recommended Size</p>
-                  <p className="text-sm font-bold text-primary">{detectedSize} — Perfect Fit</p>
+                  <p className="text-sm font-bold text-primary">{detectedSize} — {fitNote || 'Perfect Fit'}</p>
                 </div>
               </div>
             )}

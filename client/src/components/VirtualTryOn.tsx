@@ -8,12 +8,32 @@ import { Loader2, Camera, Upload, RotateCcw } from "lucide-react";
 
 interface TryOnProps {
   garmentUrl: string;
-  onSizeDetected?: (size: string) => void;
+  onSizeDetected?: (size: string, note: string) => void;
+}
+
+// EMA (Exponential Moving Average) for smoothing landmarks
+class EMASmoother {
+  private alpha: number;
+  private value: { x: number; y: number; z: number } | null = null;
+
+  constructor(alpha: number = 0.3) {
+    this.alpha = alpha;
+  }
+
+  smooth(next: { x: number; y: number; z: number }) {
+    if (!this.value) {
+      this.value = { ...next };
+    } else {
+      this.value.x = this.alpha * next.x + (1 - this.alpha) * this.value.x;
+      this.value.y = this.alpha * next.y + (1 - this.alpha) * this.value.y;
+      this.value.z = this.alpha * next.z + (1 - this.alpha) * this.value.z;
+    }
+    return this.value;
+  }
 }
 
 export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const threeCanvasRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [mode, setMode] = useState<"photo" | "live">("live");
@@ -22,10 +42,16 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const shirtMeshRef = useRef<THREE.Mesh | null>(null);
+  
+  // Segmented Garment Parts
+  const torsoRef = useRef<THREE.Mesh | null>(null);
+  const leftUpperSleeveRef = useRef<THREE.Mesh | null>(null);
+  const rightUpperSleeveRef = useRef<THREE.Mesh | null>(null);
+
+  // Smoothers for key points
+  const smoothers = useRef<Record<number, EMASmoother>>({});
 
   useEffect(() => {
-    // Initialize Three.js
     if (!threeCanvasRef.current) return;
 
     const scene = new THREE.Scene();
@@ -35,27 +61,33 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
     renderer.setSize(640, 480);
     threeCanvasRef.current.appendChild(renderer.domElement);
 
-    const light = new THREE.AmbientLight(0xffffff, 1);
+    const light = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(light);
-
     camera.position.z = 5;
     
     sceneRef.current = scene;
     cameraRef.current = camera;
     rendererRef.current = renderer;
 
-    // Load Garment Texture
     const loader = new THREE.TextureLoader();
     loader.load(garmentUrl, (texture) => {
-      const geometry = new THREE.PlaneGeometry(3, 4);
-      const material = new THREE.MeshBasicMaterial({ 
-        map: texture, 
-        transparent: true,
-        side: THREE.DoubleSide 
-      });
-      const mesh = new THREE.Mesh(geometry, material);
-      scene.add(mesh);
-      shirtMeshRef.current = mesh;
+      // Create Torso
+      const torsoGeo = new THREE.PlaneGeometry(3, 4);
+      const mat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
+      const torso = new THREE.Mesh(torsoGeo, mat);
+      scene.add(torso);
+      torsoRef.current = torso;
+
+      // Create Sleeves (Represented as planes for rotation logic)
+      const sleeveGeo = new THREE.PlaneGeometry(1, 2);
+      const leftSleeve = new THREE.Mesh(sleeveGeo, mat.clone());
+      const rightSleeve = new THREE.Mesh(sleeveGeo, mat.clone());
+      
+      scene.add(leftSleeve);
+      scene.add(rightSleeve);
+      
+      leftUpperSleeveRef.current = leftSleeve;
+      rightUpperSleeveRef.current = rightSleeve;
     });
 
     return () => {
@@ -82,32 +114,62 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
 
     poseInstance.onResults((results) => {
       setIsLoading(false);
-      if (!results.poseLandmarks || !shirtMeshRef.current) return;
+      if (!results.poseLandmarks || !torsoRef.current) return;
 
-      // Update Three.js Shirt Position based on shoulders
-      const leftShoulder = results.poseLandmarks[11];
-      const rightShoulder = results.poseLandmarks[12];
+      const landmarks = results.poseLandmarks;
       
-      const centerX = (leftShoulder.x + rightShoulder.x) / 2;
-      const centerY = (leftShoulder.y + rightShoulder.y) / 2;
-      const width = Math.abs(leftShoulder.x - rightShoulder.x);
+      // Smoothing function
+      const getSmooth = (idx: number) => {
+        if (!smoothers.current[idx]) smoothers.current[idx] = new EMASmoother(0.2);
+        return smoothers.current[idx].smooth(landmarks[idx]);
+      };
 
-      // Convert MediaPipe coords (0-1) to Three.js coords
-      shirtMeshRef.current.position.x = (centerX - 0.5) * 10;
-      shirtMeshRef.current.position.y = -(centerY - 0.5) * 8;
-      shirtMeshRef.current.scale.set(width * 8, width * 8, 1);
+      const ls = getSmooth(11); // Left Shoulder
+      const rs = getSmooth(12); // Right Shoulder
+      const le = getSmooth(13); // Left Elbow
+      const re = getSmooth(14); // Right Elbow
 
-      // Size Detection Logic
+      // Torso Alignment
+      const centerX = (ls.x + rs.x) / 2;
+      const centerY = (ls.y + rs.y) / 2;
+      const shoulderWidth = Math.abs(ls.x - rs.x);
+
+      torsoRef.current.position.set((centerX - 0.5) * 10, -(centerY - 0.5) * 8, 0);
+      torsoRef.current.scale.set(shoulderWidth * 8, shoulderWidth * 8, 1);
+
+      // Sleeve Rotation Logic
+      if (leftUpperSleeveRef.current && rightUpperSleeveRef.current) {
+        // Left Sleeve Rotation (Shoulder to Elbow)
+        const leftAngle = Math.atan2(le.y - ls.y, le.x - ls.x);
+        leftUpperSleeveRef.current.position.set((ls.x - 0.5) * 10, -(ls.y - 0.5) * 8, 0.1);
+        leftUpperSleeveRef.current.rotation.z = leftAngle + Math.PI / 2;
+
+        // Right Sleeve Rotation
+        const rightAngle = Math.atan2(re.y - rs.y, re.x - rs.x);
+        rightUpperSleeveRef.current.position.set((rs.x - 0.5) * 10, -(rs.y - 0.5) * 8, 0.1);
+        rightUpperSleeveRef.current.rotation.z = rightAngle + Math.PI / 2;
+      }
+
+      // Advanced Size Detection
       if (onSizeDetected) {
-        const shoulderDist = Math.sqrt(
-          Math.pow(leftShoulder.x - rightShoulder.x, 2) + 
-          Math.pow(leftShoulder.y - rightShoulder.y, 2)
-        );
+        const torsoHeight = Math.abs(getSmooth(23).y - ls.y); // Hip to Shoulder
+        const ratio = shoulderWidth / torsoHeight;
+        
         let size = "M";
-        if (shoulderDist < 0.25) size = "S";
-        else if (shoulderDist > 0.35) size = "XL";
-        else if (shoulderDist > 0.3) size = "L";
-        onSizeDetected(size);
+        let note = "Standard fit";
+        
+        if (shoulderWidth < 0.22) {
+          size = "S";
+          note = "Fitted look recommended";
+        } else if (shoulderWidth > 0.32) {
+          size = "XL";
+          note = "Relaxed fit for comfort";
+        } else if (shoulderWidth > 0.28) {
+          size = "L";
+          note = "True to size";
+        }
+
+        onSizeDetected(size, note);
       }
 
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
@@ -132,45 +194,21 @@ export function VirtualTryOn({ garmentUrl, onSizeDetected }: TryOnProps) {
       {isLoading && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-50">
           <Loader2 className="w-8 h-8 animate-spin text-primary mb-2" />
-          <p className="text-sm text-muted-foreground">Initializing AI Camera...</p>
+          <p className="text-sm text-muted-foreground">Initializing AR Engine...</p>
         </div>
       )}
-      
-      <video
-        ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover grayscale opacity-50"
-        playsInline
-      />
-      
-      <div 
-        ref={threeCanvasRef} 
-        className="absolute inset-0 z-10 pointer-events-none" 
-      />
-
+      <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover grayscale opacity-40" playsInline />
+      <div ref={threeCanvasRef} className="absolute inset-0 z-10 pointer-events-none" />
       <div className="absolute bottom-4 left-4 right-4 flex justify-between gap-2 z-20">
         <div className="flex gap-2">
-          <Button 
-            variant={mode === "live" ? "default" : "secondary"}
-            size="sm"
-            onClick={() => setMode("live")}
-            data-testid="button-mode-live"
-          >
-            <Camera className="w-4 h-4 mr-2" />
-            Live
+          <Button variant={mode === "live" ? "default" : "secondary"} size="sm" onClick={() => setMode("live")}>
+            <Camera className="w-4 h-4 mr-2" /> Live
           </Button>
-          <Button 
-            variant={mode === "photo" ? "default" : "secondary"}
-            size="sm"
-            onClick={() => setMode("photo")}
-            data-testid="button-mode-photo"
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            Photo
+          <Button variant={mode === "photo" ? "default" : "secondary"} size="sm" onClick={() => setMode("photo")}>
+            <Upload className="w-4 h-4 mr-2" /> Photo
           </Button>
         </div>
-        <Button variant="outline" size="icon" data-testid="button-reset">
-          <RotateCcw className="w-4 h-4" />
-        </Button>
+        <Button variant="outline" size="icon"><RotateCcw className="w-4 h-4" /></Button>
       </div>
     </Card>
   );
