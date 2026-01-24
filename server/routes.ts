@@ -62,7 +62,8 @@ export async function registerRoutes(
         : `${req.protocol}://${req.get("host")}${garmentUrl}`;
 
       // Use IDM-VTON on Hugging Face (Free)
-      const app = await client("yisol/IDM-VTON");
+      const hfToken = process.env.HF_TOKEN;
+      const app = await client("yisol/IDM-VTON", { hf_token: hfToken as string });
       const result = await app.predict("/tryon", [
         {
           background: fullUserPhotoUrl,
