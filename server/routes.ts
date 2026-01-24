@@ -62,7 +62,6 @@ export async function registerRoutes(
         : `${req.protocol}://${req.get("host")}${garmentUrl}`;
 
       // Use IDM-VTON on Hugging Face (Free)
-      let gradioApp: any;
       try {
         const hfToken = process.env.HF_TOKEN as `hf_${string}` | undefined;
         
@@ -70,24 +69,17 @@ export async function registerRoutes(
         // to prevent unhandled 'error' events from crashing the server
         const clientOptions = { 
           hf_token: hfToken,
-          status_callback: (status: any) => {
-            if (status.status === "error") {
-              console.error("Gradio Status Error:", status.message);
-            }
-          }
         };
 
         const result = await Promise.race([
           (async () => {
             const app = await client("yisol/IDM-VTON", clientOptions);
             
-            // Add a local error handler to the client instance if possible
-            if (app && (app as any).event_source) {
-              (app as any).event_source.onerror = (err: any) => {
-                console.error("Gradio EventSource Error (Local):", err);
-              };
-            }
-
+            // The Gradio JS client uses websockets/eventsource internally.
+            // We need to ensure we catch any errors that might be emitted asynchronously.
+            // Some versions of the client might not expose the underlying socket easily,
+            // so we rely on the promise rejection and global error handlers.
+            
             return await app.predict("/tryon", [
               {
                 background: fullUserPhotoUrl,
@@ -102,7 +94,7 @@ export async function registerRoutes(
               42
             ]);
           })(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error("AI processing timed out")), 60000))
+          new Promise((_, reject) => setTimeout(() => reject(new Error("AI processing timed out")), 90000))
         ]);
 
         const output = result as any;
@@ -113,16 +105,20 @@ export async function registerRoutes(
         }
       } catch (err: any) {
         console.error("VTON Processing Error:", err);
-        const status = err.message?.includes("403") ? 403 : 500;
-        const message = err.message?.includes("403") 
-          ? "AI service is currently restricted. Please ensure your HF_TOKEN has 'read' permissions." 
+        // Map 403 to a more user-friendly message
+        const is403 = err.message?.includes("403") || (err.status === 403);
+        const status = is403 ? 403 : 500;
+        const message = is403
+          ? "The AI service is currently unavailable (403 Forbidden). This often happens when the Hugging Face Space is sleeping or rate-limited. Please check your HF_TOKEN permissions or try again in a few minutes." 
           : (err.message || "Failed to process try-on");
         
         res.status(status).json({ message });
       }
     } catch (err: any) {
       console.error("Internal Server Error:", err);
-      res.status(500).json({ message: "An internal server error occurred" });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "An internal server error occurred" });
+      }
     }
   });
 
