@@ -82,46 +82,52 @@ export async function registerRoutes(
             }
           }, 90000);
 
-          try {
-            const hfApp = await client("yisol/IDM-VTON", clientOptions);
-            
-            // The client might be an EventEmitter or have an internal bus
-            if (hfApp && typeof (hfApp as any).on === 'function') {
-              (hfApp as any).on("error", (err: any) => {
-                console.error("Gradio Client Async Error caught in wrapper:", err);
-                if (!finished) {
-                  finished = true;
-                  clearTimeout(timeout);
-                  reject(err);
-                }
-              });
-            }
+          // List of alternative spaces to try if the primary one fails
+          const spaces = ["yisol/IDM-VTON", "kadirnar/IDM-VTON", "pngwn/IDM-VTON"];
+          let lastError = null;
 
-            const predictResult = await hfApp.predict("/tryon", [
-              {
-                background: fullUserPhotoUrl,
-                layers: [],
-                composite: null
-              },
-              fullGarmentUrl,
-              "t-shirt",
-              true,
-              false,
-              30,
-              42
-            ]);
-            
-            if (!finished) {
-              finished = true;
-              clearTimeout(timeout);
-              resolve(predictResult);
+          for (const space of spaces) {
+            try {
+              console.log(`Attempting to use AI space: ${space}`);
+              const hfApp = await client(space, clientOptions);
+              
+              if (hfApp && typeof (hfApp as any).on === 'function') {
+                (hfApp as any).on("error", (err: any) => {
+                  console.error(`Gradio Client Async Error in ${space}:`, err);
+                });
+              }
+
+              const predictResult = await hfApp.predict("/tryon", [
+                {
+                  background: fullUserPhotoUrl,
+                  layers: [],
+                  composite: null
+                },
+                fullGarmentUrl,
+                "t-shirt",
+                true,
+                false,
+                30,
+                42
+              ]);
+              
+              if (!finished) {
+                finished = true;
+                clearTimeout(timeout);
+                resolve(predictResult);
+                return;
+              }
+            } catch (err: any) {
+              console.error(`Space ${space} failed:`, err.message);
+              lastError = err;
+              continue; // Try next space
             }
-          } catch (err) {
-            if (!finished) {
-              finished = true;
-              clearTimeout(timeout);
-              reject(err);
-            }
+          }
+
+          if (!finished) {
+            finished = true;
+            clearTimeout(timeout);
+            reject(lastError || new Error("All AI spaces failed"));
           }
         });
 
