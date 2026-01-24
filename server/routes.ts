@@ -73,14 +73,17 @@ export async function registerRoutes(
 
         const result = await Promise.race([
           (async () => {
-            const app = await client("yisol/IDM-VTON", clientOptions);
+            const hfApp = await client("yisol/IDM-VTON", clientOptions);
             
-            // The Gradio JS client uses websockets/eventsource internally.
-            // We need to ensure we catch any errors that might be emitted asynchronously.
-            // Some versions of the client might not expose the underlying socket easily,
-            // so we rely on the promise rejection and global error handlers.
-            
-            return await app.predict("/tryon", [
+            // Handle asynchronous errors emitted by the Gradio client
+            // to prevent them from crashing the server
+            if ((hfApp as any).on) {
+              (hfApp as any).on("error", (err: any) => {
+                console.error("Gradio Client Async Error:", err);
+              });
+            }
+
+            return await hfApp.predict("/tryon", [
               {
                 background: fullUserPhotoUrl,
                 layers: [],
