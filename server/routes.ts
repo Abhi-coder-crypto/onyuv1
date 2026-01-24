@@ -137,9 +137,17 @@ export async function registerRoutes(
         garmentId: sessionData.garmentId || 1, // Ensure garmentId is provided
       });
       res.status(201).json(session);
-    } catch (err) {
-      console.error("Session creation error:", err);
-      res.status(400).json({ message: "Could not create session" });
+    } catch (err: any) {
+      console.error("Session creation error details:", {
+        message: err.message,
+        stack: err.stack,
+        code: err.code,
+        detail: err.detail
+      });
+      res.status(400).json({ 
+        message: "Could not create session",
+        error: err.message 
+      });
     }
   });
 
