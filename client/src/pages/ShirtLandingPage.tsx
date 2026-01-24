@@ -163,14 +163,15 @@ export default function ShirtLandingPage() {
               
               {/* Try On Button Overlay */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/5 backdrop-blur-[2px]">
-                <Button 
-                  size="lg" 
-                  className="rounded-full px-8 py-6 h-auto text-lg font-bold shadow-2xl bg-black text-white hover:bg-black/90 hover-elevate active-elevate-2"
-                  onClick={() => setShowTryOn(true)}
-                >
-                  <Zap className="mr-2 w-6 h-6 fill-current text-white" />
-                  TRY ON NOW
-                </Button>
+                <Link href={`/photo-try-on?garment=${encodeURIComponent(selectedVariant.image)}`}>
+                  <Button 
+                    size="lg" 
+                    className="rounded-full px-8 py-6 h-auto text-lg font-bold shadow-2xl bg-black text-white hover:bg-black/90 hover-elevate active-elevate-2"
+                  >
+                    <Zap className="mr-2 w-6 h-6 fill-current text-white" />
+                    TRY ON NOW
+                  </Button>
+                </Link>
               </div>
             </div>
 
