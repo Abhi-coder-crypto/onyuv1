@@ -89,12 +89,18 @@ export async function registerRoutes(
           for (const space of spaces) {
             try {
               console.log(`Attempting to use AI space: ${space}`);
-              const hfApp = await client(space, clientOptions);
+              
+              // We use a temporary promise to handle the client connection
+              const hfApp = await Promise.race([
+                client(space, clientOptions),
+                new Promise((_, r) => setTimeout(() => r(new Error(`Timeout connecting to ${space}`)), 15000))
+              ]) as any;
               
               // Handle asynchronous errors emitted by the Gradio client
-              if (hfApp && typeof (hfApp as any).on === 'function') {
-                (hfApp as any).on("error", (err: any) => {
+              if (hfApp && typeof hfApp.on === 'function') {
+                hfApp.on("error", (err: any) => {
                   console.error(`Gradio Client Async Error in ${space}:`, err);
+                  // Don't reject here if already finished, but this helps log the 403s
                 });
               }
 
@@ -121,7 +127,8 @@ export async function registerRoutes(
             } catch (err: any) {
               console.error(`Space ${space} failed:`, err.message);
               lastError = err;
-              continue; // Try next space
+              // If we get a 403, we definitely want to try the next space
+              continue; 
             }
           }
 
