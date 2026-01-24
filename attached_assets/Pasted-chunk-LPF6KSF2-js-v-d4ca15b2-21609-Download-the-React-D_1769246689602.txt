@@ -1,0 +1,38 @@
+chunk-LPF6KSF2.js?v=d4ca15b2:21609 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+client:865 [vite] server connection lost. Polling for restart...
+PhotoTryOn.tsx:53  POST https://5a095a88-42f0-470a-a313-fc762469f446-00-1jhvg7vtptuoh.picard.replit.dev/api/try-on/process 502 (Bad Gateway)
+processImage @ PhotoTryOn.tsx:53
+await in processImage
+callCallback2 @ chunk-LPF6KSF2.js?v=d4ca15b2:3680
+invokeGuardedCallbackDev @ chunk-LPF6KSF2.js?v=d4ca15b2:3705
+invokeGuardedCallback @ chunk-LPF6KSF2.js?v=d4ca15b2:3739
+invokeGuardedCallbackAndCatchFirstError @ chunk-LPF6KSF2.js?v=d4ca15b2:3742
+executeDispatch @ chunk-LPF6KSF2.js?v=d4ca15b2:7046
+processDispatchQueueItemsInOrder @ chunk-LPF6KSF2.js?v=d4ca15b2:7066
+processDispatchQueue @ chunk-LPF6KSF2.js?v=d4ca15b2:7075
+dispatchEventsForPlugins @ chunk-LPF6KSF2.js?v=d4ca15b2:7083
+(anonymous) @ chunk-LPF6KSF2.js?v=d4ca15b2:7206
+batchedUpdates$1 @ chunk-LPF6KSF2.js?v=d4ca15b2:18966
+batchedUpdates @ chunk-LPF6KSF2.js?v=d4ca15b2:3585
+dispatchEventForPluginEventSystem @ chunk-LPF6KSF2.js?v=d4ca15b2:7205
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-LPF6KSF2.js?v=d4ca15b2:5484
+dispatchEvent @ chunk-LPF6KSF2.js?v=d4ca15b2:5478
+dispatchDiscreteEvent @ chunk-LPF6KSF2.js?v=d4ca15b2:5455
+PhotoTryOn.tsx:76 SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+processImage @ PhotoTryOn.tsx:76
+await in processImage
+callCallback2 @ chunk-LPF6KSF2.js?v=d4ca15b2:3680
+invokeGuardedCallbackDev @ chunk-LPF6KSF2.js?v=d4ca15b2:3705
+invokeGuardedCallback @ chunk-LPF6KSF2.js?v=d4ca15b2:3739
+invokeGuardedCallbackAndCatchFirstError @ chunk-LPF6KSF2.js?v=d4ca15b2:3742
+executeDispatch @ chunk-LPF6KSF2.js?v=d4ca15b2:7046
+processDispatchQueueItemsInOrder @ chunk-LPF6KSF2.js?v=d4ca15b2:7066
+processDispatchQueue @ chunk-LPF6KSF2.js?v=d4ca15b2:7075
+dispatchEventsForPlugins @ chunk-LPF6KSF2.js?v=d4ca15b2:7083
+(anonymous) @ chunk-LPF6KSF2.js?v=d4ca15b2:7206
+batchedUpdates$1 @ chunk-LPF6KSF2.js?v=d4ca15b2:18966
+batchedUpdates @ chunk-LPF6KSF2.js?v=d4ca15b2:3585
+dispatchEventForPluginEventSystem @ chunk-LPF6KSF2.js?v=d4ca15b2:7205
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-LPF6KSF2.js?v=d4ca15b2:5484
+dispatchEvent @ chunk-LPF6KSF2.js?v=d4ca15b2:5478
+dispatchDiscreteEvent @ chunk-LPF6KSF2.js?v=d4ca15b2:5455
