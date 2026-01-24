@@ -77,11 +77,20 @@ export default function PhotoTryOn() {
           const centerY = ((leftShoulder.y + rightShoulder.y) / 2) * canvas.height;
 
           // Scale garment
-          const garmentScaleWidth = shoulderWidth * 2.2;
+          const garmentScaleWidth = shoulderWidth * 2.3; // Increased for better coverage
           const garmentScaleHeight = garmentScaleWidth * (garmentImg.height / garmentImg.width);
 
           ctx.save();
-          ctx.translate(centerX, centerY + (torsoHeight * 0.4));
+          // Adjust vertical placement for a more natural look
+          // Using a slight transparency for better blending with the user's photo
+          ctx.globalAlpha = 0.95; 
+          ctx.translate(centerX, centerY + (torsoHeight * 0.45));
+          
+          // Add a subtle drop shadow for depth
+          ctx.shadowColor = "rgba(0,0,0,0.2)";
+          ctx.shadowBlur = 20;
+          ctx.shadowOffsetY = 10;
+
           ctx.drawImage(
             garmentImg, 
             -garmentScaleWidth / 2, 
@@ -92,7 +101,7 @@ export default function PhotoTryOn() {
           ctx.restore();
 
           setProcessedImage(canvas.toDataURL("image/png"));
-          toast({ title: "Processing complete!", description: "The garment has been fitted to your photo." });
+          toast({ title: "Fitting Complete!", description: "We've matched the shirt to your body posture." });
         } else {
           toast({ 
             title: "Detection failed", 
