@@ -65,50 +65,64 @@ export async function registerRoutes(
       let gradioApp: any;
       try {
         const hfToken = process.env.HF_TOKEN as `hf_${string}` | undefined;
-        gradioApp = await client("yisol/IDM-VTON", { 
+        
+        // Use a more robust way to initialize and call the client
+        // to prevent unhandled 'error' events from crashing the server
+        const clientOptions = { 
           hf_token: hfToken,
           status_callback: (status: any) => {
             if (status.status === "error") {
               console.error("Gradio Status Error:", status.message);
             }
           }
-        });
+        };
 
-        // Add an error listener to the WebSocket/Client to prevent unhandled 'error' events
-        if (gradioApp && gradioApp.event_source) {
-          gradioApp.event_source.addEventListener("error", (event: any) => {
-            console.error("Gradio Event Source Error:", event);
-          });
+        const result = await Promise.race([
+          (async () => {
+            const app = await client("yisol/IDM-VTON", clientOptions);
+            
+            // Add a local error handler to the client instance if possible
+            if (app && (app as any).event_source) {
+              (app as any).event_source.onerror = (err: any) => {
+                console.error("Gradio EventSource Error (Local):", err);
+              };
+            }
+
+            return await app.predict("/tryon", [
+              {
+                background: fullUserPhotoUrl,
+                layers: [],
+                composite: null
+              },
+              fullGarmentUrl,
+              "t-shirt",
+              true,
+              false,
+              30,
+              42
+            ]);
+          })(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("AI processing timed out")), 60000))
+        ]);
+
+        const output = result as any;
+        if (output.data && Array.isArray(output.data) && output.data[0]) {
+          res.json({ image: { url: output.data[0].url } });
+        } else {
+          throw new Error("No image generated");
         }
-      } catch (clientErr: any) {
-        console.error("Gradio Client Initialization Error:", clientErr);
-        return res.status(500).json({ message: "Failed to connect to AI service. Please check your HF_TOKEN." });
-      }
-
-      const result = await gradioApp.predict("/tryon", [
-        {
-          background: fullUserPhotoUrl,
-          layers: [],
-          composite: null
-        },
-        fullGarmentUrl,
-        "t-shirt",
-        true,
-        false,
-        30,
-        42
-      ]);
-
-      // Gradio returns an array of results, the image is typically at index 0
-      const output = result as any;
-      if (output.data && Array.isArray(output.data) && output.data[0]) {
-        res.json({ image: { url: output.data[0].url } });
-      } else {
-        throw new Error("No image generated");
+      } catch (err: any) {
+        console.error("VTON Processing Error:", err);
+        const status = err.message?.includes("403") ? 403 : 500;
+        const message = err.message?.includes("403") 
+          ? "AI service is currently restricted. Please ensure your HF_TOKEN has 'read' permissions." 
+          : (err.message || "Failed to process try-on");
+        
+        res.status(status).json({ message });
       }
     } catch (err: any) {
-      console.error("VTON Error:", err);
-      res.status(500).json({ message: err.message || "Failed to process try-on" });
+      console.error("Internal Server Error:", err);
+      res.status(500).json({ message: "An internal server error occurred" });
     }
   });
 
