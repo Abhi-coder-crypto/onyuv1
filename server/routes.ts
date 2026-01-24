@@ -91,6 +91,7 @@ export async function registerRoutes(
               console.log(`Attempting to use AI space: ${space}`);
               const hfApp = await client(space, clientOptions);
               
+              // Handle asynchronous errors emitted by the Gradio client
               if (hfApp && typeof (hfApp as any).on === 'function') {
                 (hfApp as any).on("error", (err: any) => {
                   console.error(`Gradio Client Async Error in ${space}:`, err);
@@ -143,7 +144,7 @@ export async function registerRoutes(
         const is403 = err.message?.includes("403") || (err.status === 403);
         const status = is403 ? 403 : 500;
         const message = is403
-          ? "The AI service is currently unavailable (403 Forbidden). This often happens when the Hugging Face Space is sleeping or rate-limited. Please check your HF_TOKEN permissions or try again in a few minutes." 
+          ? "The AI service is currently unavailable (403 Forbidden). Please try again in a few minutes or check your HF_TOKEN." 
           : (err.message || "Failed to process try-on");
         
         res.status(status).json({ message });
