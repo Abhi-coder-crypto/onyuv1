@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
 import { uploadToCloudinary } from "./cloudinary";
-import { Client } from "@gradio/client";
+import { client } from "@gradio/client";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -49,24 +49,25 @@ export async function registerRoutes(
       const { userPhotoUrl, garmentUrl } = req.body;
       
       // Use IDM-VTON on Hugging Face (Free)
-      const client = await Client.connect("yisol/IDM-VTON");
-      const result = await client.predict("/tryon", {
-        dict: {
+      const app = await client("yisol/IDM-VTON");
+      const result = await app.predict("/tryon", [
+        {
           background: userPhotoUrl,
           layers: [],
           composite: null
         },
-        garm_img: garmentUrl,
-        garment_des: "t-shirt",
-        is_checked: true,
-        is_checked_crop: false,
-        denoise_steps: 30,
-        seed: 42
-      });
+        garmentUrl,
+        "t-shirt",
+        true,
+        false,
+        30,
+        42
+      ]);
 
       // Gradio returns an array of results, the image is typically at index 0
-      if (result.data && Array.isArray(result.data) && result.data[0]) {
-        res.json({ image: { url: (result.data[0] as any).url } });
+      const output = result as any;
+      if (output.data && Array.isArray(output.data) && output.data[0]) {
+        res.json({ image: { url: output.data[0].url } });
       } else {
         throw new Error("No image generated");
       }
