@@ -94,28 +94,19 @@ export async function registerRoutes(
               const hfApp = await Promise.race([
                 client(space, clientOptions),
                 new Promise((_, r) => setTimeout(() => r(new Error(`Timeout connecting to ${space}`)), 15000))
-              ]) as any;
+              ]).catch(err => {
+                console.error(`Pre-connection error for ${space}:`, err.message);
+                throw err;
+              }) as any;
               
               // Handle asynchronous errors emitted by the Gradio client
-              // We use a proxy or a dummy listener if it's not a proper emitter
-              if (hfApp) {
-                const originalOn = hfApp.on;
-                if (typeof originalOn === 'function') {
-                  hfApp.on = function(event: string, listener: any) {
-                    if (event === 'error') {
-                      return originalOn.call(this, event, (err: any) => {
-                        console.error(`Gradio Client Async Error in ${space}:`, err);
-                        // By attaching this listener, we prevent the event from being "unhandled"
-                        // which is what causes the Node.js process to crash.
-                        if (typeof listener === 'function') listener(err);
-                      });
-                    }
-                    return originalOn.call(this, event, listener);
-                  };
-                  
-                  // Attach a dummy error listener immediately to prevent unhandled 'error' events
-                  hfApp.on("error", () => {});
-                }
+              // We force a listener BEFORE doing anything else
+              if (hfApp && typeof hfApp.on === 'function') {
+                hfApp.on("error", (err: any) => {
+                  console.error(`Gradio Client Async Error in ${space}:`, err);
+                  // By attaching this, we satisfy Node.js that the error is "handled"
+                  // so the process doesn't crash.
+                });
               }
 
               const predictResult = await hfApp.predict("/tryon", [
