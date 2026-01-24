@@ -48,7 +48,6 @@ export default function ShirtLandingPage() {
 
   return (
     <div className="min-h-screen bg-white text-black">
-      {/* Full Screen Try-On Overlay */}
       {/* Header */}
       <header className="border-b border-black/5 sticky top-0 z-50 bg-white/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between">
@@ -93,6 +92,7 @@ export default function ShirtLandingPage() {
         </div>
       </header>
 
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-xs uppercase tracking-widest text-muted-foreground mb-12">
           <Link href="/" className="hover:text-black">Home</Link>
