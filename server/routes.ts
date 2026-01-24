@@ -82,8 +82,13 @@ export async function registerRoutes(
             }
           }, 90000);
 
-          // List of alternative spaces to try if the primary one fails
-          const spaces = ["yisol/IDM-VTON", "kadirnar/IDM-VTON", "pngwn/IDM-VTON"];
+          // List of high-accuracy spaces. CatVTON is currently SOTA for free spaces.
+          const spaces = [
+            "vinesmsuic/CatVTON-Flux", // High accuracy CatVTON + Flux
+            "yisol/IDM-VTON", 
+            "kadirnar/IDM-VTON", 
+            "pngwn/IDM-VTON"
+          ];
           let lastError = null;
 
           for (const space of spaces) {
