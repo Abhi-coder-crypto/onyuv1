@@ -94,22 +94,27 @@ export async function registerRoutes(
             try {
               console.log(`Attempting to use AI space: ${space}`);
               
-              // We use a temporary promise to handle the client connection
               const hfApp = await Promise.race([
-                client(space, clientOptions),
+                client(space, clientOptions).then(c => {
+                  // Attach a dummy error listener to the internal WebSocket if possible
+                  // to prevent unhandled 'error' events during initialization/metadata load
+                  if (c && (c as any).on) {
+                    (c as any).on("error", (err: any) => {
+                      console.error(`Gradio Client Async Error in ${space}:`, err.message);
+                    });
+                  }
+                  return c;
+                }),
                 new Promise((_, r) => setTimeout(() => r(new Error(`Timeout connecting to ${space}`)), 15000))
               ]).catch(err => {
                 console.error(`Pre-connection error for ${space}:`, err.message);
                 throw err;
               }) as any;
               
-              // Handle asynchronous errors emitted by the Gradio client
-              // We force a listener BEFORE doing anything else
+              // Ensure the error listener is attached if it wasn't already
               if (hfApp && typeof hfApp.on === 'function') {
                 hfApp.on("error", (err: any) => {
-                  console.error(`Gradio Client Async Error in ${space}:`, err);
-                  // By attaching this, we satisfy Node.js that the error is "handled"
-                  // so the process doesn't crash.
+                  console.error(`Gradio Client Async Error in ${space}:`, err.message);
                 });
               }
 
