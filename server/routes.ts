@@ -97,11 +97,25 @@ export async function registerRoutes(
               ]) as any;
               
               // Handle asynchronous errors emitted by the Gradio client
-              if (hfApp && typeof hfApp.on === 'function') {
-                hfApp.on("error", (err: any) => {
-                  console.error(`Gradio Client Async Error in ${space}:`, err);
-                  // Don't reject here if already finished, but this helps log the 403s
-                });
+              // We use a proxy or a dummy listener if it's not a proper emitter
+              if (hfApp) {
+                const originalOn = hfApp.on;
+                if (typeof originalOn === 'function') {
+                  hfApp.on = function(event: string, listener: any) {
+                    if (event === 'error') {
+                      return originalOn.call(this, event, (err: any) => {
+                        console.error(`Gradio Client Async Error in ${space}:`, err);
+                        // By attaching this listener, we prevent the event from being "unhandled"
+                        // which is what causes the Node.js process to crash.
+                        if (typeof listener === 'function') listener(err);
+                      });
+                    }
+                    return originalOn.call(this, event, listener);
+                  };
+                  
+                  // Attach a dummy error listener immediately to prevent unhandled 'error' events
+                  hfApp.on("error", () => {});
+                }
               }
 
               const predictResult = await hfApp.predict("/tryon", [
@@ -127,7 +141,6 @@ export async function registerRoutes(
             } catch (err: any) {
               console.error(`Space ${space} failed:`, err.message);
               lastError = err;
-              // If we get a 403, we definitely want to try the next space
               continue; 
             }
           }
