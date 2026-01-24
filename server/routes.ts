@@ -64,26 +64,40 @@ export async function registerRoutes(
       // Use IDM-VTON on Hugging Face (Free)
       try {
         const hfToken = process.env.HF_TOKEN as `hf_${string}` | undefined;
+        if (!hfToken) {
+          console.warn("HF_TOKEN is missing in environment variables");
+        }
         
-        // Use a more robust way to initialize and call the client
-        // to prevent unhandled 'error' events from crashing the server
         const clientOptions = { 
           hf_token: hfToken,
         };
 
-        const result = await Promise.race([
-          (async () => {
+        // Create a wrapper to catch the early 'error' event that crashes the server
+        const result = await new Promise(async (resolve, reject) => {
+          let finished = false;
+          const timeout = setTimeout(() => {
+            if (!finished) {
+              finished = true;
+              reject(new Error("AI processing timed out"));
+            }
+          }, 90000);
+
+          try {
             const hfApp = await client("yisol/IDM-VTON", clientOptions);
             
-            // Handle asynchronous errors emitted by the Gradio client
-            // to prevent them from crashing the server
-            if ((hfApp as any).on) {
+            // The client might be an EventEmitter or have an internal bus
+            if (hfApp && typeof (hfApp as any).on === 'function') {
               (hfApp as any).on("error", (err: any) => {
-                console.error("Gradio Client Async Error:", err);
+                console.error("Gradio Client Async Error caught in wrapper:", err);
+                if (!finished) {
+                  finished = true;
+                  clearTimeout(timeout);
+                  reject(err);
+                }
               });
             }
 
-            return await hfApp.predict("/tryon", [
+            const predictResult = await hfApp.predict("/tryon", [
               {
                 background: fullUserPhotoUrl,
                 layers: [],
@@ -96,9 +110,20 @@ export async function registerRoutes(
               30,
               42
             ]);
-          })(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error("AI processing timed out")), 90000))
-        ]);
+            
+            if (!finished) {
+              finished = true;
+              clearTimeout(timeout);
+              resolve(predictResult);
+            }
+          } catch (err) {
+            if (!finished) {
+              finished = true;
+              clearTimeout(timeout);
+              reject(err);
+            }
+          }
+        });
 
         const output = result as any;
         if (output.data && Array.isArray(output.data) && output.data[0]) {
