@@ -49,7 +49,6 @@ export default function PhotoTryOn() {
       if (!sessionResponse.ok) throw new Error("Failed to upload photo");
       const session = await sessionResponse.json();
 
-      // 2. Call our backend proxy for Hugging Face VTON
       const vtonResponse = await fetch("/api/try-on/process", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -60,8 +59,15 @@ export default function PhotoTryOn() {
       });
 
       if (!vtonResponse.ok) {
-        const errorData = await vtonResponse.json();
-        throw new Error(errorData.message || "AI processing failed");
+        let errorMessage = "AI processing failed";
+        try {
+          const errorData = await vtonResponse.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          // If JSON parsing fails, use the status text or a default message
+          errorMessage = `Server Error: ${vtonResponse.status} ${vtonResponse.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
 
       const result = await vtonResponse.json();
