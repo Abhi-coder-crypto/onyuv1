@@ -49,7 +49,50 @@ export default function ShirtLandingPage() {
   return (
     <div className="min-h-screen bg-white text-black">
       {/* Full Screen Try-On Overlay */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      {/* Header */}
+      <header className="border-b border-black/5 sticky top-0 z-50 bg-white/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between">
+          <div className="flex-shrink-0">
+            <Link href="/" className="flex items-center">
+              <img src={logoImg} alt="Logo" className="h-64 w-auto object-contain" />
+            </Link>
+          </div>
+          
+          <nav className="hidden lg:flex items-center justify-center flex-1 px-4 space-x-8">
+            <Link href="/" className="text-base font-bold uppercase tracking-[0.2em] whitespace-nowrap hover:text-primary/70 transition-colors">Home</Link>
+            <a href="#" className="text-base font-bold uppercase tracking-[0.2em] whitespace-nowrap hover:text-primary/70 transition-colors">New Arrivals</a>
+            <a href="#" className="text-base font-bold uppercase tracking-[0.2em] whitespace-nowrap hover:text-primary/70 transition-colors">Trending</a>
+            <div className="flex items-center gap-1 cursor-pointer group whitespace-nowrap relative">
+              <span className="text-base font-bold uppercase tracking-[0.2em] group-hover:text-primary/70 transition-colors">Categories</span>
+              <ChevronDown className="w-5 h-5 group-hover:text-primary/70 transition-colors" />
+              
+              {/* Dropdown Menu */}
+              <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-black/5 shadow-2xl rounded-2xl py-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                <Link href="/shirts" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">Shirts</Link>
+                <Link href="/" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">T-Shirts</Link>
+              </div>
+            </div>
+          </nav>
+
+          <div className="flex items-center space-x-8 flex-shrink-0">
+            <Button variant="ghost" size="icon" className="hover-elevate">
+              <SearchIcon className="w-5 h-5" />
+            </Button>
+            <Button variant="ghost" size="icon" className="hover-elevate">
+              <User className="w-5 h-5" />
+            </Button>
+            <Button variant="ghost" size="icon" className="hover-elevate relative">
+              <Heart className="w-5 h-5" />
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-black text-[10px] font-bold rounded-full flex items-center justify-center text-white">0</span>
+            </Button>
+            <Button variant="ghost" size="icon" className="hover-elevate relative">
+              <ShoppingCart className="w-5 h-5" />
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-black text-[10px] font-bold rounded-full flex items-center justify-center text-white">0</span>
+            </Button>
+          </div>
+        </div>
+      </header>
+
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-xs uppercase tracking-widest text-muted-foreground mb-12">
           <Link href="/" className="hover:text-black">Home</Link>
