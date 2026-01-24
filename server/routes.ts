@@ -84,7 +84,6 @@ export async function registerRoutes(
 
           // List of high-accuracy spaces. CatVTON is currently SOTA for free spaces.
           const spaces = [
-            "vinesmsuic/CatVTON-Flux", // High accuracy CatVTON + Flux
             "yisol/IDM-VTON", 
             "kadirnar/IDM-VTON", 
             "pngwn/IDM-VTON"
