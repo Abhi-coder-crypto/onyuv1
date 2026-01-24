@@ -67,13 +67,19 @@ export async function registerRoutes(
         const hfToken = process.env.HF_TOKEN as `hf_${string}` | undefined;
         gradioApp = await client("yisol/IDM-VTON", { 
           hf_token: hfToken,
-          // Correct parameter name for status updates in Gradio JS client
           status_callback: (status: any) => {
             if (status.status === "error") {
               console.error("Gradio Status Error:", status.message);
             }
           }
         });
+
+        // Add an error listener to the WebSocket/Client to prevent unhandled 'error' events
+        if (gradioApp && gradioApp.event_source) {
+          gradioApp.event_source.addEventListener("error", (event: any) => {
+            console.error("Gradio Event Source Error:", event);
+          });
+        }
       } catch (clientErr: any) {
         console.error("Gradio Client Initialization Error:", clientErr);
         return res.status(500).json({ message: "Failed to connect to AI service. Please check your HF_TOKEN." });
