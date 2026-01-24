@@ -3,13 +3,18 @@ import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
-import { uploadToCloudinary } from "./cloudinary";
+import { uploadToLocalStorage } from "./local-storage";
 import { client } from "@gradio/client";
+import express from "express";
+import path from "path";
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  // Serve uploads directory
+  app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
   app.get(api.looks.list.path, async (req, res) => {
     const looks = await storage.getLooks();
     res.json(looks);
@@ -48,15 +53,23 @@ export async function registerRoutes(
     try {
       const { userPhotoUrl, garmentUrl } = req.body;
       
+      const fullUserPhotoUrl = userPhotoUrl.startsWith("http") 
+        ? userPhotoUrl 
+        : `${req.protocol}://${req.get("host")}${userPhotoUrl}`;
+
+      const fullGarmentUrl = garmentUrl.startsWith("http")
+        ? garmentUrl
+        : `${req.protocol}://${req.get("host")}${garmentUrl}`;
+
       // Use IDM-VTON on Hugging Face (Free)
       const app = await client("yisol/IDM-VTON");
       const result = await app.predict("/tryon", [
         {
-          background: userPhotoUrl,
+          background: fullUserPhotoUrl,
           layers: [],
           composite: null
         },
-        garmentUrl,
+        fullGarmentUrl,
         "t-shirt",
         true,
         false,
@@ -83,7 +96,7 @@ export async function registerRoutes(
       let userPhotoUrl = sessionData.userPhotoUrl;
 
       if (userPhotoBase64) {
-        userPhotoUrl = await uploadToCloudinary(userPhotoBase64);
+        userPhotoUrl = await uploadToLocalStorage(userPhotoBase64);
       }
 
       const session = await storage.createTryOnSession({
