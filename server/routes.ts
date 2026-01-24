@@ -54,8 +54,8 @@ export async function registerRoutes(
 
       const result = await fal.subscribe("fal-ai/fashn/tryon/v1.5", {
         input: {
-          human_image_url: userPhotoUrl,
-          garment_image_url: garmentUrl,
+          human_image: userPhotoUrl,
+          garment_image: garmentUrl,
           category: "tops"
         },
         logs: true,
