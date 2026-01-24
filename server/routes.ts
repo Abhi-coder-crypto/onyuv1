@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
 import { uploadToCloudinary } from "./cloudinary";
-import { fal } from "@fal-ai/client";
+import { Client } from "@gradio/client";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -48,21 +48,28 @@ export async function registerRoutes(
     try {
       const { userPhotoUrl, garmentUrl } = req.body;
       
-      if (!process.env.FAL_KEY) {
-        return res.status(500).json({ message: "FAL_KEY not configured" });
-      }
-
-      // Use type cast since fal-ai package might have slightly different type definitions
-      const result = await (fal as any).subscribe("fal-ai/fashn/tryon/v1.5", {
-        input: {
-          human_image_url: userPhotoUrl,
-          garment_image_url: garmentUrl,
-          category: "tops"
+      // Use IDM-VTON on Hugging Face (Free)
+      const client = await Client.connect("yisol/IDM-VTON");
+      const result = await client.predict("/tryon", {
+        dict: {
+          background: userPhotoUrl,
+          layers: [],
+          composite: null
         },
-        logs: true,
+        garm_img: garmentUrl,
+        garment_des: "t-shirt",
+        is_checked: true,
+        is_checked_crop: false,
+        denoise_steps: 30,
+        seed: 42
       });
 
-      res.json(result);
+      // Gradio returns an array of results, the image is typically at index 0
+      if (result.data && Array.isArray(result.data) && result.data[0]) {
+        res.json({ image: { url: (result.data[0] as any).url } });
+      } else {
+        throw new Error("No image generated");
+      }
     } catch (err: any) {
       console.error("VTON Error:", err);
       res.status(500).json({ message: err.message || "Failed to process try-on" });

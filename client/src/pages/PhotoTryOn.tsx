@@ -49,7 +49,7 @@ export default function PhotoTryOn() {
       if (!sessionResponse.ok) throw new Error("Failed to upload photo");
       const session = await sessionResponse.json();
 
-      // 2. Call our backend proxy for fal.ai VTON
+      // 2. Call our backend proxy for Hugging Face VTON
       const vtonResponse = await fetch("/api/try-on/process", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
