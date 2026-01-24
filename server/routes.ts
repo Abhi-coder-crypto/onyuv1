@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
 import { uploadToCloudinary } from "./cloudinary";
+import { fal } from "@fal-ai/client";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -41,6 +42,30 @@ export async function registerRoutes(
   app.get(api.products.list.path, async (req, res) => {
     const products = await storage.getProducts();
     res.json(products);
+  });
+
+  app.post("/api/try-on/process", async (req, res) => {
+    try {
+      const { userPhotoUrl, garmentUrl } = req.body;
+      
+      if (!process.env.FAL_KEY) {
+        return res.status(500).json({ message: "FAL_KEY not configured" });
+      }
+
+      const result = await fal.subscribe("fal-ai/fashn/tryon/v1.5", {
+        input: {
+          human_image_url: userPhotoUrl,
+          garment_image_url: garmentUrl,
+          category: "tops"
+        },
+        logs: true,
+      });
+
+      res.json(result);
+    } catch (err: any) {
+      console.error("VTON Error:", err);
+      res.status(500).json({ message: err.message || "Failed to process try-on" });
+    }
   });
 
   app.post("/api/try-on/session", async (req, res) => {

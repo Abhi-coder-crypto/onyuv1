@@ -35,88 +35,51 @@ export default function PhotoTryOn() {
     setIsProcessing(true);
 
     try {
-      const poseInstance = new pose.Pose({
-        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+      // 1. Upload user photo to Cloudinary first to get a URL
+      const sessionResponse = await fetch("/api/try-on/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userPhotoBase64: image,
+          garmentUrl: garmentUrl,
+          garmentId: 1 // Default ID
+        }),
       });
-      poseInstance.setOptions({ modelComplexity: 1 });
 
-      const img = new Image();
-      img.crossOrigin = "anonymous";
+      if (!sessionResponse.ok) throw new Error("Failed to upload photo");
+      const session = await sessionResponse.json();
+
+      // 2. Call our backend proxy for fal.ai VTON
+      const vtonResponse = await fetch("/api/try-on/process", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userPhotoUrl: session.userPhotoUrl,
+          garmentUrl: window.location.origin + garmentUrl
+        }),
+      });
+
+      if (!vtonResponse.ok) {
+        const errorData = await vtonResponse.json();
+        throw new Error(errorData.message || "AI processing failed");
+      }
+
+      const result = await vtonResponse.json();
       
-      const garmentImg = new Image();
-      garmentImg.crossOrigin = "anonymous";
-
-      await Promise.all([
-        new Promise((resolve) => { img.onload = resolve; img.src = image; }),
-        new Promise((resolve) => { garmentImg.onload = resolve; garmentImg.src = garmentUrl; })
-      ]);
-
-      poseInstance.onResults((results) => {
-        if (results.poseLandmarks && canvasRef.current) {
-          const canvas = canvasRef.current;
-          const ctx = canvas.getContext("2d");
-          if (!ctx) return;
-
-          canvas.width = img.width;
-          canvas.height = img.height;
-
-          // Draw original user photo
-          ctx.drawImage(img, 0, 0);
-
-          const landmarks = results.poseLandmarks;
-          const leftShoulder = landmarks[11];
-          const rightShoulder = landmarks[12];
-          const leftHip = landmarks[23];
-          const rightHip = landmarks[24];
-
-          // Calculate placement
-          const shoulderWidth = Math.abs(leftShoulder.x - rightShoulder.x) * canvas.width;
-          const torsoHeight = Math.abs(((leftShoulder.y + rightShoulder.y)/2) - ((leftHip.y + rightHip.y)/2)) * canvas.height;
-          
-          const centerX = ((leftShoulder.x + rightShoulder.x) / 2) * canvas.width;
-          const centerY = ((leftShoulder.y + rightShoulder.y) / 2) * canvas.height;
-
-          // Scale garment
-          const garmentScaleWidth = shoulderWidth * 2.5; // Increased for better overlap
-          const garmentScaleHeight = garmentScaleWidth * (garmentImg.height / garmentImg.width);
-
-          ctx.save();
-          // Adjust vertical placement for a more natural look
-          // Using a slight transparency for better blending with the user's photo
-          ctx.globalAlpha = 0.98; 
-          ctx.translate(centerX, centerY + (torsoHeight * 0.42));
-          
-          // Add a subtle drop shadow for depth
-          ctx.shadowColor = "rgba(0,0,0,0.3)";
-          ctx.shadowBlur = 25;
-          ctx.shadowOffsetY = 12;
-
-          ctx.drawImage(
-            garmentImg, 
-            -garmentScaleWidth / 2, 
-            -garmentScaleHeight / 2, 
-            garmentScaleWidth, 
-            garmentScaleHeight
-          );
-          ctx.restore();
-
-          setProcessedImage(canvas.toDataURL("image/png"));
-          toast({ title: "Fitting Complete!", description: "The shirt has been adjusted to your posture." });
-        } else {
-          toast({ 
-            title: "Detection failed", 
-            description: "We couldn't detect a person in the photo. Please try another one.",
-            variant: "destructive"
-          });
-        }
-        setIsProcessing(false);
-        poseInstance.close();
-      });
-
-      await poseInstance.send({ image: img });
-    } catch (error) {
+      if (result.image?.url) {
+        setProcessedImage(result.image.url);
+        toast({ title: "Fitting Complete!", description: "The AI has realistically fitted the garment." });
+      } else {
+        throw new Error("No image returned from AI");
+      }
+    } catch (error: any) {
       console.error(error);
-      toast({ title: "Error", description: "Failed to process image.", variant: "destructive" });
+      toast({ 
+        title: "Error", 
+        description: error.message || "Failed to process image.", 
+        variant: "destructive" 
+      });
+    } finally {
       setIsProcessing(false);
     }
   };
