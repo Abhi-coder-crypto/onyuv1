@@ -3,7 +3,6 @@ import { Link } from "wouter";
 import { ArrowRight, Shield, Zap, ShoppingCart, Heart, User, Search as SearchIcon, ChevronDown, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { VirtualTryOn } from "@/components/VirtualTryOn";
 import {
   Accordion,
   AccordionContent,
