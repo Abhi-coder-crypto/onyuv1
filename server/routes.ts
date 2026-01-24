@@ -52,10 +52,11 @@ export async function registerRoutes(
         return res.status(500).json({ message: "FAL_KEY not configured" });
       }
 
-      const result = await fal.subscribe("fal-ai/fashn/tryon/v1.5", {
+      // Use type cast since fal-ai package might have slightly different type definitions
+      const result = await (fal as any).subscribe("fal-ai/fashn/tryon/v1.5", {
         input: {
-          human_image: userPhotoUrl,
-          garment_image: garmentUrl,
+          human_image_url: userPhotoUrl,
+          garment_image_url: garmentUrl,
           category: "tops"
         },
         logs: true,
