@@ -102,6 +102,7 @@ export async function registerRoutes(
       const session = await storage.createTryOnSession({
         ...sessionData,
         userPhotoUrl,
+        garmentId: sessionData.garmentId || 1, // Ensure garmentId is provided
       });
       res.status(201).json(session);
     } catch (err) {
