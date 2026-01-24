@@ -40,7 +40,6 @@ export default function ShirtLandingPage() {
   const [selectedVariant, setSelectedVariant] = useState(HALF_SLEEVE_SHIRTS[0]);
   const [detectedSize, setDetectedSize] = useState<string | null>(null);
   const [fitNote, setFitNote] = useState<string | null>(null);
-  const [showTryOn, setShowTryOn] = useState(false);
 
   const handleSizeDetected = useCallback((size: string, note: string) => {
     setDetectedSize(size);
@@ -50,96 +49,6 @@ export default function ShirtLandingPage() {
   return (
     <div className="min-h-screen bg-white text-black">
       {/* Full Screen Try-On Overlay */}
-      <AnimatePresence>
-        {showTryOn && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center"
-          >
-            <div className="absolute top-6 right-6 z-[110] flex gap-4">
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="rounded-full bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-md px-6 font-bold"
-                onClick={() => setShowTryOn(false)}
-              >
-                <X className="mr-2 w-5 h-5" />
-                EXIT TRY-ON
-              </Button>
-            </div>
-            
-            <div className="w-full h-full max-w-5xl mx-auto p-4 md:p-8 flex flex-col justify-center">
-              <VirtualTryOn 
-                garmentUrl={selectedVariant.image} 
-                onSizeDetected={handleSizeDetected}
-              />
-            </div>
-
-            {detectedSize && (
-              <motion.div 
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                className="absolute top-24 right-6 z-[110] bg-white/10 backdrop-blur-xl border border-white/20 p-4 rounded-2xl flex items-center gap-3 text-white max-w-xs"
-              >
-                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0">
-                  <User className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">AI Fit Recommendation</p>
-                  <p className="text-sm font-bold">{detectedSize} — {fitNote || 'Perfect Fit'}</p>
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Header */}
-      <header className="border-b border-black/5 sticky top-0 z-50 bg-white/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between">
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
-              <img src={logoImg} alt="Logo" className="h-64 w-auto object-contain" />
-            </Link>
-          </div>
-          
-          <nav className="hidden lg:flex items-center justify-center flex-1 px-4 space-x-8">
-            <Link href="/" className="text-base font-bold uppercase tracking-[0.2em] whitespace-nowrap hover:text-primary/70 transition-colors">Home</Link>
-            <a href="#" className="text-base font-bold uppercase tracking-[0.2em] whitespace-nowrap hover:text-primary/70 transition-colors">New Arrivals</a>
-            <a href="#" className="text-base font-bold uppercase tracking-[0.2em] whitespace-nowrap hover:text-primary/70 transition-colors">Trending</a>
-            <div className="flex items-center gap-1 cursor-pointer group whitespace-nowrap relative">
-              <span className="text-base font-bold uppercase tracking-[0.2em] group-hover:text-primary/70 transition-colors">Categories</span>
-              <ChevronDown className="w-5 h-5 group-hover:text-primary/70 transition-colors" />
-              
-              {/* Dropdown Menu */}
-              <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-black/5 shadow-2xl rounded-2xl py-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                <Link href="/shirts" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">Shirts</Link>
-                <Link href="/" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">T-Shirts</Link>
-              </div>
-            </div>
-          </nav>
-
-          <div className="flex items-center space-x-8 flex-shrink-0">
-            <Button variant="ghost" size="icon" className="hover-elevate">
-              <SearchIcon className="w-5 h-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="hover-elevate">
-              <User className="w-5 h-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="hover-elevate relative">
-              <Heart className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-black text-[10px] font-bold rounded-full flex items-center justify-center text-white">0</span>
-            </Button>
-            <Button variant="ghost" size="icon" className="hover-elevate relative">
-              <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-black text-[10px] font-bold rounded-full flex items-center justify-center text-white">0</span>
-            </Button>
-          </div>
-        </div>
-      </header>
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-xs uppercase tracking-widest text-muted-foreground mb-12">
