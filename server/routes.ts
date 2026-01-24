@@ -62,9 +62,24 @@ export async function registerRoutes(
         : `${req.protocol}://${req.get("host")}${garmentUrl}`;
 
       // Use IDM-VTON on Hugging Face (Free)
-      const hfToken = process.env.HF_TOKEN as `hf_${string}` | undefined;
-      const app = await client("yisol/IDM-VTON", { hf_token: hfToken });
-      const result = await app.predict("/tryon", [
+      let gradioApp: any;
+      try {
+        const hfToken = process.env.HF_TOKEN as `hf_${string}` | undefined;
+        gradioApp = await client("yisol/IDM-VTON", { 
+          hf_token: hfToken,
+          // Correct parameter name for status updates in Gradio JS client
+          status_callback: (status: any) => {
+            if (status.status === "error") {
+              console.error("Gradio Status Error:", status.message);
+            }
+          }
+        });
+      } catch (clientErr: any) {
+        console.error("Gradio Client Initialization Error:", clientErr);
+        return res.status(500).json({ message: "Failed to connect to AI service. Please check your HF_TOKEN." });
+      }
+
+      const result = await gradioApp.predict("/tryon", [
         {
           background: fullUserPhotoUrl,
           layers: [],
