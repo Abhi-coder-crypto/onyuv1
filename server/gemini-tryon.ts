@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import fs from "fs";
 import path from "path";
 
-const RATE_LIMIT = 15;
+const RATE_LIMIT = 5;
 const RATE_WINDOW_MS = 60000;
 
 interface QueueItem {
@@ -147,7 +147,7 @@ class GeminiTryOnProcessor {
       ]);
 
       const model = this.genAI.getGenerativeModel({ 
-        model: "gemini-2.0-flash-exp-image-generation",
+        model: "gemini-2.0-flash-exp",
         generationConfig: {
           responseModalities: ["Text", "Image"]
         } as any
