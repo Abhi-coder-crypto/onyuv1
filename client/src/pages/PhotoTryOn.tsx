@@ -91,14 +91,19 @@ export default function PhotoTryOn() {
       // Simple overlay logic based on shoulders
       const leftShoulder = results.poseLandmarks[11];
       const rightShoulder = results.poseLandmarks[12];
+      
+      // Calculate mid-point and width in canvas units
       const midShoulderX = (leftShoulder.x + rightShoulder.x) / 2 * canvas.width;
       const midShoulderY = (leftShoulder.y + rightShoulder.y) / 2 * canvas.height;
       const shoulderWidth = Math.abs(leftShoulder.x - rightShoulder.x) * canvas.width;
 
-      const shirtWidth = shoulderWidth * 2.5;
+      // Adjust these multipliers for better fit
+      const shirtWidth = shoulderWidth * 2.1; // Slightly narrower to avoid "oversized" look
       const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
+      
       const shirtX = midShoulderX - shirtWidth / 2;
-      const shirtY = midShoulderY - shirtHeight * 0.2;
+      // Align neck more precisely - Move it up slightly based on shoulder height
+      const shirtY = midShoulderY - (shirtHeight * 0.15); 
 
       ctx.drawImage(garmentImg, shirtX, shirtY, shirtWidth, shirtHeight);
       
