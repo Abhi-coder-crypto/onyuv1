@@ -4,7 +4,6 @@ import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
 import { uploadToLocalStorage } from "./local-storage";
-import { geminiProcessor } from "./gemini-tryon";
 import express from "express";
 import path from "path";
 
@@ -50,8 +49,7 @@ export async function registerRoutes(
   });
 
   app.get("/api/try-on/queue-status", (req, res) => {
-    const status = geminiProcessor.getQueueStatus();
-    res.json(status);
+    res.json({ queueLength: 0, estimatedWaitMs: 0 });
   });
 
   app.post("/api/try-on/process", async (req, res) => {
@@ -62,23 +60,10 @@ export async function registerRoutes(
         return res.status(400).json({ message: "Missing userPhotoUrl or garmentUrl" });
       }
 
-      const host = `${req.protocol}://${req.get("host")}`;
-
-      console.log("Processing try-on with Gemini:", { userPhotoUrl, garmentUrl });
-      
-      const resultImage = await geminiProcessor.addToQueue(userPhotoUrl, garmentUrl, host);
-      
-      res.json({ image: { url: resultImage } });
+      // No-op for now, client will handle overlay
+      res.json({ image: { url: userPhotoUrl } });
     } catch (err: any) {
-      console.error("Try-on Processing Error:", err);
-      
-      const isRateLimit = err.message?.includes("rate") || err.message?.includes("quota");
-      const status = isRateLimit ? 429 : 500;
-      const message = isRateLimit 
-        ? "Rate limit reached. Please wait a moment and try again."
-        : (err.message || "Failed to process try-on");
-      
-      res.status(status).json({ message });
+      res.status(500).json({ message: "Failed to process try-on" });
     }
   });
 

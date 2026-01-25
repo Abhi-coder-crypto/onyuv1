@@ -32,57 +32,80 @@ export default function PhotoTryOn() {
   };
 
   const processImage = async () => {
-    if (!image) return;
+    if (!image || !canvasRef.current) return;
     setIsProcessing(true);
-    setProcessingStatus("Uploading your photo...");
+    setProcessingStatus("Processing your look...");
 
     try {
-      const sessionResponse = await fetch("/api/try-on/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userPhotoBase64: image,
-          garmentUrl: garmentUrl,
-          garmentId: 1
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Could not initialize canvas");
+
+      // Load images
+      const [userImg, garmentImg] = await Promise.all([
+        new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = image;
         }),
+        new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = garmentUrl;
+        })
+      ]);
+
+      // Use MediaPipe for pose detection
+      const poseDetector = new pose.Pose({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
       });
 
-      if (!sessionResponse.ok) throw new Error("Failed to upload photo");
-      const session = await sessionResponse.json();
-
-      setProcessingStatus("AI is fitting the garment on you...");
-      
-      const vtonResponse = await fetch("/api/try-on/process", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userPhotoUrl: session.userPhotoUrl,
-          garmentUrl: garmentUrl
-        }),
+      poseDetector.setOptions({
+        modelComplexity: 1,
+        smoothLandmarks: true,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5,
       });
 
-      if (!vtonResponse.ok) {
-        let errorMessage = "AI processing failed";
-        try {
-          const errorData = await vtonResponse.json();
-          errorMessage = errorData.message || errorMessage;
-          if (vtonResponse.status === 429) {
-            errorMessage = "Google's AI is currently at its free limit. Please try again in 30-60 seconds.";
-          }
-        } catch (e) {
-          errorMessage = `Server Error: ${vtonResponse.status} ${vtonResponse.statusText}`;
-        }
-        throw new Error(errorMessage);
+      let results: any = null;
+      await new Promise<void>((resolve) => {
+        poseDetector.onResults((r) => {
+          results = r;
+          resolve();
+        });
+        poseDetector.send({ image: userImg });
+      });
+
+      if (!results || !results.poseLandmarks) {
+        throw new Error("No person detected in the photo. Please use a clear full-body photo.");
       }
 
-      const result = await vtonResponse.json();
+      // Draw the overlay
+      canvas.width = userImg.width;
+      canvas.height = userImg.height;
+      ctx.drawImage(userImg, 0, 0);
+
+      // Simple overlay logic based on shoulders
+      const leftShoulder = results.poseLandmarks[11];
+      const rightShoulder = results.poseLandmarks[12];
+      const midShoulderX = (leftShoulder.x + rightShoulder.x) / 2 * canvas.width;
+      const midShoulderY = (leftShoulder.y + rightShoulder.y) / 2 * canvas.height;
+      const shoulderWidth = Math.abs(leftShoulder.x - rightShoulder.x) * canvas.width;
+
+      const shirtWidth = shoulderWidth * 2.5;
+      const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
+      const shirtX = midShoulderX - shirtWidth / 2;
+      const shirtY = midShoulderY - shirtHeight * 0.2;
+
+      ctx.drawImage(garmentImg, shirtX, shirtY, shirtWidth, shirtHeight);
       
-      if (result.image?.url) {
-        setProcessedImage(result.image.url);
-        toast({ title: "Fitting Complete!", description: "The AI has realistically fitted the garment." });
-      } else {
-        throw new Error("No image returned from AI");
-      }
+      const dataUrl = canvas.toDataURL("image/png");
+      setProcessedImage(dataUrl);
+      
+      toast({ title: "Fitting Complete!", description: "The garment has been fitted locally." });
     } catch (error: any) {
       console.error(error);
       toast({ 
