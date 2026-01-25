@@ -129,9 +129,12 @@ export default function PhotoTryOn() {
       ctx.rotate(torsoAngle);
       
       // Vertical offset to align neckline
-      // A larger negative value moves the shirt UP.
-      // 0.35 moves it up significantly to meet the shoulder line.
-      const verticalOffset = shirtHeight * 0.35;
+      // Feedback Loop:
+      // 0.35: Too high (mouth)
+      // 0.23: Still high
+      // 0.15: Too low (grey shirt visible)
+      // 0.18 should be the "Goldilocks" value for this specific garment/pose.
+      const verticalOffset = shirtHeight * 0.18;
       
       // Draw image centered horizontally and adjusted vertically
       ctx.drawImage(garmentImg, -shirtWidth / 2, -verticalOffset, shirtWidth, shirtHeight);
