@@ -64,10 +64,10 @@ export default function PhotoTryOn() {
       });
 
       poseDetector.setOptions({
-        modelComplexity: 1,
+        modelComplexity: 2, // Use more accurate model
         smoothLandmarks: true,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5,
+        minDetectionConfidence: 0.7, // Higher confidence for better accuracy
+        minTrackingConfidence: 0.7,
       });
 
       let results: any = null;
@@ -88,24 +88,38 @@ export default function PhotoTryOn() {
       canvas.height = userImg.height;
       ctx.drawImage(userImg, 0, 0);
 
-      // Simple overlay logic based on shoulders
-      const leftShoulder = results.poseLandmarks[11];
-      const rightShoulder = results.poseLandmarks[12];
+      // Advanced alignment based on multiple landmarks
+      const posePoints = results.poseLandmarks;
+      const leftShoulder = posePoints[11];
+      const rightShoulder = posePoints[12];
+      const leftHip = posePoints[23];
+      const rightHip = posePoints[24];
       
-      // Calculate mid-point and width in canvas units
+      // Calculate torso center and rotation
       const midShoulderX = (leftShoulder.x + rightShoulder.x) / 2 * canvas.width;
       const midShoulderY = (leftShoulder.y + rightShoulder.y) / 2 * canvas.height;
-      const shoulderWidth = Math.abs(leftShoulder.x - rightShoulder.x) * canvas.width;
-
-      // Refined multipliers based on user feedback
-      const shirtWidth = shoulderWidth * 2.6; // Slightly narrower for better silhouette
-      const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
+      const midHipX = (leftHip.x + rightHip.x) / 2 * canvas.width;
+      const midHipY = (leftHip.y + rightHip.y) / 2 * canvas.height;
       
-      const shirtX = midShoulderX - shirtWidth / 2;
-      // Precision neckline alignment - keep it slightly high to cover underlying collar
-      const shirtY = midShoulderY - (shirtHeight * 0.16); 
+      const torsoAngle = Math.atan2(rightShoulder.y - leftShoulder.y, rightShoulder.x - leftShoulder.x);
+      const shoulderWidth = Math.sqrt(
+        Math.pow((rightShoulder.x - leftShoulder.x) * canvas.width, 2) + 
+        Math.pow((rightShoulder.y - leftShoulder.y) * canvas.height, 2)
+      );
 
-      ctx.drawImage(garmentImg, shirtX, shirtY, shirtWidth, shirtHeight);
+      // Scaling factor: garment should be wider than shoulders to cover torso
+      const shirtWidth = shoulderWidth * 2.4; 
+      const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
+
+      // Positioning: Center on mid-shoulder and rotate with torso
+      ctx.save();
+      ctx.translate(midShoulderX, midShoulderY);
+      ctx.rotate(torsoAngle);
+      
+      // Fine-tune Y position: move up to cover collar (approx 15% of garment height)
+      const offsetY = shirtHeight * 0.15;
+      ctx.drawImage(garmentImg, -shirtWidth / 2, -offsetY, shirtWidth, shirtHeight);
+      ctx.restore();
       
       const dataUrl = canvas.toDataURL("image/png");
       setProcessedImage(dataUrl);
