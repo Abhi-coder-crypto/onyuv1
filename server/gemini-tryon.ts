@@ -147,10 +147,7 @@ class GeminiTryOnProcessor {
       ]);
 
       const model = this.genAI.getGenerativeModel({ 
-        model: "gemini-2.0-flash-exp",
-        generationConfig: {
-          responseModalities: ["Text", "Image"]
-        } as any
+        model: "gemini-1.5-flash",
       });
 
       const prompt = `You are a virtual try-on assistant. Take the person in the first image and show them wearing the garment from the second image. 

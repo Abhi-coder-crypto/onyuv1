@@ -67,7 +67,7 @@ export default function PhotoTryOn() {
           const errorData = await vtonResponse.json();
           errorMessage = errorData.message || errorMessage;
           if (vtonResponse.status === 429) {
-            errorMessage = "High demand right now. Please try again in a few seconds.";
+            errorMessage = "Google's AI is currently at its free limit. Please try again in 30-60 seconds.";
           }
         } catch (e) {
           errorMessage = `Server Error: ${vtonResponse.status} ${vtonResponse.statusText}`;
