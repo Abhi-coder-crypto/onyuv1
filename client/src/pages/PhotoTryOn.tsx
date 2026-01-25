@@ -115,13 +115,17 @@ export default function PhotoTryOn() {
       ctx.save();
       // Move to center point
       ctx.translate(midShoulderX, midShoulderY);
-      // Rotate based on shoulder angle
+      // We need to rotate by the angle, but then draw the image centered.
+      // The issue was likely the coordinate system or the angle calculation.
+      // Let's ensure the rotation is correctly oriented.
       ctx.rotate(torsoAngle);
       
-      // Draw image centered at origin, then shifted up
-      // Note: We use -shirtWidth/2 for X to center it horizontally
-      // We use a small negative Y offset to place the neckline correctly
+      // Fine-tune Y position: move up to cover collar
       const verticalOffset = shirtHeight * 0.15;
+      
+      // Draw image centered at the translated origin
+      // -shirtWidth/2 for X to center horizontally
+      // -verticalOffset for Y to align neckline
       ctx.drawImage(garmentImg, -shirtWidth / 2, -verticalOffset, shirtWidth, shirtHeight);
       ctx.restore();
       
