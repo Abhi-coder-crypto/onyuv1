@@ -113,12 +113,16 @@ export default function PhotoTryOn() {
 
       // Positioning: Center on mid-shoulder and rotate with torso
       ctx.save();
+      // Move to center point
       ctx.translate(midShoulderX, midShoulderY);
+      // Rotate based on shoulder angle
       ctx.rotate(torsoAngle);
       
-      // Fine-tune Y position: move up to cover collar (approx 15% of garment height)
-      const offsetY = shirtHeight * 0.15;
-      ctx.drawImage(garmentImg, -shirtWidth / 2, -offsetY, shirtWidth, shirtHeight);
+      // Draw image centered at origin, then shifted up
+      // Note: We use -shirtWidth/2 for X to center it horizontally
+      // We use a small negative Y offset to place the neckline correctly
+      const verticalOffset = shirtHeight * 0.15;
+      ctx.drawImage(garmentImg, -shirtWidth / 2, -verticalOffset, shirtWidth, shirtHeight);
       ctx.restore();
       
       const dataUrl = canvas.toDataURL("image/png");
