@@ -102,7 +102,17 @@ export default function PhotoTryOn() {
       // Calculate angle from left to right shoulder
       const dx = (rightShoulder.x - leftShoulder.x) * canvas.width;
       const dy = (rightShoulder.y - leftShoulder.y) * canvas.height;
-      const torsoAngle = Math.atan2(dy, dx);
+      
+      // The issue is that atan2(dy, dx) for shoulders (11 to 12) 
+      // returns an angle that might be flipped depending on person's orientation.
+      // We want the garment to be upright relative to the canvas.
+      // A standard upright garment has its top at the top.
+      // Let's use the mid-shoulder point and keep rotation minimal.
+      let torsoAngle = Math.atan2(dy, dx);
+      
+      // Normalize angle to be between -PI/2 and PI/2 to keep shirt upright
+      if (torsoAngle > Math.PI / 2) torsoAngle -= Math.PI;
+      if (torsoAngle < -Math.PI / 2) torsoAngle += Math.PI;
       
       const shoulderWidth = Math.sqrt(dx * dx + dy * dy);
 
@@ -118,11 +128,12 @@ export default function PhotoTryOn() {
       // Rotate based on shoulder angle
       ctx.rotate(torsoAngle);
       
-      // Adjust vertical offset to place neckline naturally at the shoulder line
-      // A positive value here moves the shirt DOWN relative to the shoulders
-      const verticalOffset = shirtHeight * 0.05; 
+      // Vertical offset to align neckline
+      // A negative value in the translated/rotated context moves it "up"
+      const verticalOffset = shirtHeight * 0.15;
       
-      ctx.drawImage(garmentImg, -shirtWidth / 2, verticalOffset, shirtWidth, shirtHeight);
+      // Draw image centered horizontally and adjusted vertically
+      ctx.drawImage(garmentImg, -shirtWidth / 2, -verticalOffset, shirtWidth, shirtHeight);
       ctx.restore();
       
       const dataUrl = canvas.toDataURL("image/png");
