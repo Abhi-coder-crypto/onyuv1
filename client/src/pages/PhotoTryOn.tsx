@@ -107,7 +107,7 @@ export default function PhotoTryOn() {
       const shoulderWidth = Math.sqrt(dx * dx + dy * dy);
 
       // Scaling factor: garment should be wider than shoulders to cover torso
-      const shirtWidth = shoulderWidth * 2.4; 
+      const shirtWidth = shoulderWidth * 2.6; 
       const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
 
       // Positioning: Center on mid-shoulder and rotate with torso
@@ -115,18 +115,14 @@ export default function PhotoTryOn() {
       // Move to center point
       ctx.translate(midShoulderX, midShoulderY);
       
-      // Calculate angle and ensure it's oriented correctly (upright)
+      // Rotate based on shoulder angle
       ctx.rotate(torsoAngle);
       
-      // FIX: The garment image itself might be oriented such that it needs a flip
-      // or the canvas rotation needs to be inverted.
-      // Based on the user's feedback that it's "upside down", we'll flip the Y-axis.
-      ctx.scale(1, -1);
+      // Adjust vertical offset to place neckline naturally at the shoulder line
+      // A positive value here moves the shirt DOWN relative to the shoulders
+      const verticalOffset = shirtHeight * 0.05; 
       
-      const verticalOffset = shirtHeight * 0.15;
-      // When scaled by -1 on Y, the Y-offset direction flips.
-      // If it was shifted UP before, we now shift it "up" in the flipped coordinate system.
-      ctx.drawImage(garmentImg, -shirtWidth / 2, -verticalOffset, shirtWidth, shirtHeight);
+      ctx.drawImage(garmentImg, -shirtWidth / 2, verticalOffset, shirtWidth, shirtHeight);
       ctx.restore();
       
       const dataUrl = canvas.toDataURL("image/png");
