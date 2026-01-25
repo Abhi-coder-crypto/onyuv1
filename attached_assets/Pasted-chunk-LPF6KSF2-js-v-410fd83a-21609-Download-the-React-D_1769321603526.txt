@@ -1,0 +1,37 @@
+chunk-LPF6KSF2.js?v=410fd83a:21609 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+PhotoTryOn.tsx:40  POST https://9993715b-93f7-4100-99b8-95933296b433-00-aitfzirdjq54.kirk.replit.dev/api/try-on/session 400 (Bad Request)
+processImage @ PhotoTryOn.tsx:40
+callCallback2 @ chunk-LPF6KSF2.js?v=410fd83a:3680
+invokeGuardedCallbackDev @ chunk-LPF6KSF2.js?v=410fd83a:3705
+invokeGuardedCallback @ chunk-LPF6KSF2.js?v=410fd83a:3739
+invokeGuardedCallbackAndCatchFirstError @ chunk-LPF6KSF2.js?v=410fd83a:3742
+executeDispatch @ chunk-LPF6KSF2.js?v=410fd83a:7046
+processDispatchQueueItemsInOrder @ chunk-LPF6KSF2.js?v=410fd83a:7066
+processDispatchQueue @ chunk-LPF6KSF2.js?v=410fd83a:7075
+dispatchEventsForPlugins @ chunk-LPF6KSF2.js?v=410fd83a:7083
+(anonymous) @ chunk-LPF6KSF2.js?v=410fd83a:7206
+batchedUpdates$1 @ chunk-LPF6KSF2.js?v=410fd83a:18966
+batchedUpdates @ chunk-LPF6KSF2.js?v=410fd83a:3585
+dispatchEventForPluginEventSystem @ chunk-LPF6KSF2.js?v=410fd83a:7205
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-LPF6KSF2.js?v=410fd83a:5484
+dispatchEvent @ chunk-LPF6KSF2.js?v=410fd83a:5478
+dispatchDiscreteEvent @ chunk-LPF6KSF2.js?v=410fd83a:5455
+PhotoTryOn.tsx:87 Error: Failed to upload photo
+    at processImage (PhotoTryOn.tsx:50:38)
+processImage @ PhotoTryOn.tsx:87
+await in processImage
+callCallback2 @ chunk-LPF6KSF2.js?v=410fd83a:3680
+invokeGuardedCallbackDev @ chunk-LPF6KSF2.js?v=410fd83a:3705
+invokeGuardedCallback @ chunk-LPF6KSF2.js?v=410fd83a:3739
+invokeGuardedCallbackAndCatchFirstError @ chunk-LPF6KSF2.js?v=410fd83a:3742
+executeDispatch @ chunk-LPF6KSF2.js?v=410fd83a:7046
+processDispatchQueueItemsInOrder @ chunk-LPF6KSF2.js?v=410fd83a:7066
+processDispatchQueue @ chunk-LPF6KSF2.js?v=410fd83a:7075
+dispatchEventsForPlugins @ chunk-LPF6KSF2.js?v=410fd83a:7083
+(anonymous) @ chunk-LPF6KSF2.js?v=410fd83a:7206
+batchedUpdates$1 @ chunk-LPF6KSF2.js?v=410fd83a:18966
+batchedUpdates @ chunk-LPF6KSF2.js?v=410fd83a:3585
+dispatchEventForPluginEventSystem @ chunk-LPF6KSF2.js?v=410fd83a:7205
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-LPF6KSF2.js?v=410fd83a:5484
+dispatchEvent @ chunk-LPF6KSF2.js?v=410fd83a:5478
+dispatchDiscreteEvent @ chunk-LPF6KSF2.js?v=410fd83a:5455
