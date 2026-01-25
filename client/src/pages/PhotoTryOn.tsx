@@ -98,14 +98,13 @@ export default function PhotoTryOn() {
       // Calculate torso center and rotation
       const midShoulderX = (leftShoulder.x + rightShoulder.x) / 2 * canvas.width;
       const midShoulderY = (leftShoulder.y + rightShoulder.y) / 2 * canvas.height;
-      const midHipX = (leftHip.x + rightHip.x) / 2 * canvas.width;
-      const midHipY = (leftHip.y + rightHip.y) / 2 * canvas.height;
       
-      const torsoAngle = Math.atan2(rightShoulder.y - leftShoulder.y, rightShoulder.x - leftShoulder.x);
-      const shoulderWidth = Math.sqrt(
-        Math.pow((rightShoulder.x - leftShoulder.x) * canvas.width, 2) + 
-        Math.pow((rightShoulder.y - leftShoulder.y) * canvas.height, 2)
-      );
+      // Calculate angle from left to right shoulder
+      const dx = (rightShoulder.x - leftShoulder.x) * canvas.width;
+      const dy = (rightShoulder.y - leftShoulder.y) * canvas.height;
+      const torsoAngle = Math.atan2(dy, dx);
+      
+      const shoulderWidth = Math.sqrt(dx * dx + dy * dy);
 
       // Scaling factor: garment should be wider than shoulders to cover torso
       const shirtWidth = shoulderWidth * 2.4; 
@@ -115,17 +114,18 @@ export default function PhotoTryOn() {
       ctx.save();
       // Move to center point
       ctx.translate(midShoulderX, midShoulderY);
-      // We need to rotate by the angle, but then draw the image centered.
-      // The issue was likely the coordinate system or the angle calculation.
-      // Let's ensure the rotation is correctly oriented.
+      
+      // Calculate angle and ensure it's oriented correctly (upright)
       ctx.rotate(torsoAngle);
       
-      // Fine-tune Y position: move up to cover collar
-      const verticalOffset = shirtHeight * 0.15;
+      // FIX: The garment image itself might be oriented such that it needs a flip
+      // or the canvas rotation needs to be inverted.
+      // Based on the user's feedback that it's "upside down", we'll flip the Y-axis.
+      ctx.scale(1, -1);
       
-      // Draw image centered at the translated origin
-      // -shirtWidth/2 for X to center horizontally
-      // -verticalOffset for Y to align neckline
+      const verticalOffset = shirtHeight * 0.15;
+      // When scaled by -1 on Y, the Y-offset direction flips.
+      // If it was shifted UP before, we now shift it "up" in the flipped coordinate system.
       ctx.drawImage(garmentImg, -shirtWidth / 2, -verticalOffset, shirtWidth, shirtHeight);
       ctx.restore();
       
