@@ -97,13 +97,13 @@ export default function PhotoTryOn() {
       const midShoulderY = (leftShoulder.y + rightShoulder.y) / 2 * canvas.height;
       const shoulderWidth = Math.abs(leftShoulder.x - rightShoulder.x) * canvas.width;
 
-      // Adjust these multipliers for better fit
-      const shirtWidth = shoulderWidth * 2.1; // Slightly narrower to avoid "oversized" look
+      // Refined multipliers based on user feedback
+      const shirtWidth = shoulderWidth * 2.8; // Increased from 2.1 to better cover shoulders
       const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
       
       const shirtX = midShoulderX - shirtWidth / 2;
-      // Align neck more precisely - Move it up slightly based on shoulder height
-      const shirtY = midShoulderY - (shirtHeight * 0.15); 
+      // Align neck more precisely - Move it up further to cover the underlying shirt
+      const shirtY = midShoulderY - (shirtHeight * 0.18); 
 
       ctx.drawImage(garmentImg, shirtX, shirtY, shirtWidth, shirtHeight);
       
