@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
 import { uploadToLocalStorage } from "./local-storage";
-import { client } from "@gradio/client";
+import { geminiProcessor } from "./gemini-tryon";
 import express from "express";
 import path from "path";
 
@@ -49,131 +49,36 @@ export async function registerRoutes(
     res.json(products);
   });
 
+  app.get("/api/try-on/queue-status", (req, res) => {
+    const status = geminiProcessor.getQueueStatus();
+    res.json(status);
+  });
+
   app.post("/api/try-on/process", async (req, res) => {
     try {
       const { userPhotoUrl, garmentUrl } = req.body;
       
-      const fullUserPhotoUrl = userPhotoUrl.startsWith("http") 
-        ? userPhotoUrl 
-        : `${req.protocol}://${req.get("host")}${userPhotoUrl}`;
-
-      const fullGarmentUrl = garmentUrl.startsWith("http")
-        ? garmentUrl
-        : `${req.protocol}://${req.get("host")}${garmentUrl}`;
-
-      // Use IDM-VTON on Hugging Face (Free)
-      try {
-        const hfToken = process.env.HF_TOKEN as `hf_${string}` | undefined;
-        if (!hfToken) {
-          console.warn("HF_TOKEN is missing in environment variables");
-        }
-        
-        const clientOptions = { 
-          hf_token: hfToken,
-        };
-
-        // Create a wrapper to catch the early 'error' event that crashes the server
-        const result = await new Promise(async (resolve, reject) => {
-          let finished = false;
-          const timeout = setTimeout(() => {
-            if (!finished) {
-              finished = true;
-              reject(new Error("AI processing timed out"));
-            }
-          }, 90000);
-
-          // List of high-accuracy spaces. CatVTON is currently SOTA for free spaces.
-          const spaces = [
-            "yisol/IDM-VTON", 
-            "kadirnar/IDM-VTON", 
-            "pngwn/IDM-VTON"
-          ];
-          let lastError = null;
-
-          for (const space of spaces) {
-            try {
-              console.log(`Attempting to use AI space: ${space}`);
-              
-              const hfApp = await Promise.race([
-                client(space, clientOptions).then(c => {
-                  // Attach a dummy error listener to the internal WebSocket if possible
-                  // to prevent unhandled 'error' events during initialization/metadata load
-                  if (c && (c as any).on) {
-                    (c as any).on("error", (err: any) => {
-                      console.error(`Gradio Client Async Error in ${space}:`, err.message);
-                    });
-                  }
-                  return c;
-                }),
-                new Promise((_, r) => setTimeout(() => r(new Error(`Timeout connecting to ${space}`)), 15000))
-              ]).catch(err => {
-                console.error(`Pre-connection error for ${space}:`, err.message);
-                throw err;
-              }) as any;
-              
-              // Ensure the error listener is attached if it wasn't already
-              if (hfApp && typeof hfApp.on === 'function') {
-                hfApp.on("error", (err: any) => {
-                  console.error(`Gradio Client Async Error in ${space}:`, err.message);
-                });
-              }
-
-              const predictResult = await hfApp.predict("/tryon", [
-                {
-                  background: fullUserPhotoUrl,
-                  layers: [],
-                  composite: null
-                },
-                fullGarmentUrl,
-                "t-shirt",
-                true,
-                false,
-                30,
-                42
-              ]);
-              
-              if (!finished) {
-                finished = true;
-                clearTimeout(timeout);
-                resolve(predictResult);
-                return;
-              }
-            } catch (err: any) {
-              console.error(`Space ${space} failed:`, err.message);
-              lastError = err;
-              continue; 
-            }
-          }
-
-          if (!finished) {
-            finished = true;
-            clearTimeout(timeout);
-            reject(lastError || new Error("All AI spaces failed"));
-          }
-        });
-
-        const output = result as any;
-        if (output.data && Array.isArray(output.data) && output.data[0]) {
-          res.json({ image: { url: output.data[0].url } });
-        } else {
-          throw new Error("No image generated");
-        }
-      } catch (err: any) {
-        console.error("VTON Processing Error:", err);
-        // Map 403 to a more user-friendly message
-        const is403 = err.message?.includes("403") || (err.status === 403);
-        const status = is403 ? 403 : 500;
-        const message = is403
-          ? "The AI service is currently unavailable (403 Forbidden). Please try again in a few minutes or check your HF_TOKEN." 
-          : (err.message || "Failed to process try-on");
-        
-        res.status(status).json({ message });
+      if (!userPhotoUrl || !garmentUrl) {
+        return res.status(400).json({ message: "Missing userPhotoUrl or garmentUrl" });
       }
+
+      const host = `${req.protocol}://${req.get("host")}`;
+
+      console.log("Processing try-on with Gemini:", { userPhotoUrl, garmentUrl });
+      
+      const resultImage = await geminiProcessor.addToQueue(userPhotoUrl, garmentUrl, host);
+      
+      res.json({ image: { url: resultImage } });
     } catch (err: any) {
-      console.error("Internal Server Error:", err);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "An internal server error occurred" });
-      }
+      console.error("Try-on Processing Error:", err);
+      
+      const isRateLimit = err.message?.includes("rate") || err.message?.includes("quota");
+      const status = isRateLimit ? 429 : 500;
+      const message = isRateLimit 
+        ? "Rate limit reached. Please wait a moment and try again."
+        : (err.message || "Failed to process try-on");
+      
+      res.status(status).json({ message });
     }
   });
 

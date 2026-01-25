@@ -12,6 +12,7 @@ export default function PhotoTryOn() {
   const [image, setImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedImage, setProcessedImage] = useState<string | null>(null);
+  const [processingStatus, setProcessingStatus] = useState<string>("Preparing...");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -33,28 +34,30 @@ export default function PhotoTryOn() {
   const processImage = async () => {
     if (!image) return;
     setIsProcessing(true);
+    setProcessingStatus("Uploading your photo...");
 
     try {
-      // 1. Upload user photo to Cloudinary first to get a URL
       const sessionResponse = await fetch("/api/try-on/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userPhotoBase64: image,
           garmentUrl: garmentUrl,
-          garmentId: 1 // Default ID
+          garmentId: 1
         }),
       });
 
       if (!sessionResponse.ok) throw new Error("Failed to upload photo");
       const session = await sessionResponse.json();
 
+      setProcessingStatus("AI is fitting the garment on you...");
+      
       const vtonResponse = await fetch("/api/try-on/process", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userPhotoUrl: session.userPhotoUrl,
-          garmentUrl: window.location.origin + garmentUrl
+          garmentUrl: garmentUrl
         }),
       });
 
@@ -63,8 +66,10 @@ export default function PhotoTryOn() {
         try {
           const errorData = await vtonResponse.json();
           errorMessage = errorData.message || errorMessage;
+          if (vtonResponse.status === 429) {
+            errorMessage = "High demand right now. Please try again in a few seconds.";
+          }
         } catch (e) {
-          // If JSON parsing fails, use the status text or a default message
           errorMessage = `Server Error: ${vtonResponse.status} ${vtonResponse.statusText}`;
         }
         throw new Error(errorMessage);
@@ -87,6 +92,7 @@ export default function PhotoTryOn() {
       });
     } finally {
       setIsProcessing(false);
+      setProcessingStatus("Preparing...");
     }
   };
 
@@ -132,7 +138,8 @@ export default function PhotoTryOn() {
               {isProcessing && (
                 <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center text-white">
                   <Loader2 className="w-12 h-12 animate-spin mb-4" />
-                  <p className="font-bold text-lg">AI Fitting in progress...</p>
+                  <p className="font-bold text-lg">{processingStatus}</p>
+                  <p className="text-sm text-white/70 mt-2">This may take up to 30 seconds</p>
                 </div>
               )}
             </div>

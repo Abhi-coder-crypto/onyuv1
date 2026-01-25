@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@fal-ai/client": "^1.7.2",
+    "@google/generative-ai": "^0.24.1",
     "@gradio/client": "^0.1.4",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
