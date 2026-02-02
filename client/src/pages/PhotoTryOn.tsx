@@ -134,8 +134,12 @@ export default function PhotoTryOn() {
       // VERTICAL REFINEMENT:
       // The goal is to place the shirt's collar exactly on the neckline.
       let neckOffsetPercent = 0.15;
-      if (isTshirt) neckOffsetPercent = 0.18; // Slightly less extreme than 0.22 to keep it realistic
-      else if (isFullSleeve) neckOffsetPercent = 0.18;
+      if (isTshirt) {
+        if (isFullSleeve) neckOffsetPercent = 0.22; // Push Full Sleeve T-shirts UP more
+        else neckOffsetPercent = 0.18; 
+      } else if (isFullSleeve) {
+        neckOffsetPercent = 0.18;
+      }
       
       const neckOffset = shirtHeight * neckOffsetPercent;
       

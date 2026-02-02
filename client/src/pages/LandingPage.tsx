@@ -28,10 +28,6 @@ const FULL_SLEEVE_TSHIRTS = [
   { id: 5, image: fullSleeveFrontImg, name: "Full Sleeve Front", type: "fullsleeve" },
 ];
 
-const HOODIES = [
-  { id: 10, image: "/hoodie-black.png", name: "Classic Black Hoodie", type: "hoodie" },
-];
-
 export default function LandingPage() {
   const [selectedVariant, setSelectedVariant] = useState(HALF_SLEEVE_TSHIRTS[0]);
   const [detectedSize, setDetectedSize] = useState<string | null>(null);
@@ -42,7 +38,7 @@ export default function LandingPage() {
     setFitNote(note);
   }, []);
 
-  const allTshirts = [...HALF_SLEEVE_TSHIRTS, ...FULL_SLEEVE_TSHIRTS, ...HOODIES];
+  const allTshirts = [...HALF_SLEEVE_TSHIRTS, ...FULL_SLEEVE_TSHIRTS];
 
   return (
     <div className="min-h-screen bg-white text-black">
@@ -171,33 +167,6 @@ export default function LandingPage() {
                         className="w-full h-2/3 object-contain p-2 transition-transform duration-500 group-hover:scale-110"
                       />
                       <span className="text-[8px] font-bold uppercase tracking-widest mt-1 mb-1 text-center px-1">{tshirt.name}</span>
-                      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="w-4 h-4 rounded-full bg-black flex items-center justify-center">
-                          <Zap className="w-2 h-2 text-white fill-current" />
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Hoodies</h3>
-                <div className="grid grid-cols-4 gap-4">
-                  {HOODIES.map((hoodie) => (
-                    <button
-                      key={hoodie.id}
-                      onClick={() => setSelectedVariant(hoodie)}
-                      className={`relative group bg-zinc-50 rounded-2xl aspect-square flex flex-col items-center justify-center overflow-hidden border transition-all duration-300 ${
-                        selectedVariant.id === hoodie.id ? 'border-black ring-1 ring-black/20' : 'border-black/5 hover:border-black/20'
-                      }`}
-                    >
-                      <img 
-                        src={hoodie.image} 
-                        alt={hoodie.name} 
-                        className="w-full h-2/3 object-contain p-2 transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <span className="text-[8px] font-bold uppercase tracking-widest mt-1 mb-1 text-center px-1">{hoodie.name}</span>
                       <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="w-4 h-4 rounded-full bg-black flex items-center justify-center">
                           <Zap className="w-2 h-2 text-white fill-current" />
