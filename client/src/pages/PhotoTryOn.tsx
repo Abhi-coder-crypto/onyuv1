@@ -126,23 +126,19 @@ export default function PhotoTryOn() {
 
       // SCALE ADJUSTMENT:
       const isHoodie = garmentUrl.includes('hoodie');
-      const isFullSleeve = garmentUrl.includes('fullsleeve') || garmentUrl.includes('Shirt');
+      const isFullSleeve = garmentUrl.includes('fullsleeve') || garmentUrl.includes('front');
       const isTshirt = garmentUrl.includes('tshirt') || garmentUrl.includes('front');
       
-      let widthMultiplier = 3.1;
+      let widthMultiplier = 2.85; // Standardized tighter fit to prevent side shift
       if (isHoodie) widthMultiplier = 3.6;
-      else if (isFullSleeve) widthMultiplier = 3.1;
+      else if (isTshirt && !garmentUrl.includes('fullsleeve')) widthMultiplier = 3.0;
       
       const shirtWidth = shoulderWidth * widthMultiplier; 
       const shirtHeightRaw = shirtWidth * (garmentImg.height / garmentImg.width);
 
       // DYNAMIC HEIGHT SCALING:
-      // Ensure the shirt height matches the person's torso height (shoulder to hip)
-      // Usually a shirt should cover about 1.1x to 1.3x the shoulder-to-hip distance
       const targetHeight = torsoHeight * 1.6; 
       const heightScaleFactor = targetHeight / shirtHeightRaw;
-      
-      // We apply a blended scaling to keep it natural but respect the torso
       const shirtHeight = shirtHeightRaw * (0.4 + (heightScaleFactor * 0.6));
 
       ctx.save();
@@ -151,13 +147,8 @@ export default function PhotoTryOn() {
       ctx.rotate(torsoAngle);
       
       // VERTICAL REFINEMENT:
-      let neckOffsetPercent = 0.15;
-      if (isTshirt) {
-        if (isFullSleeve) neckOffsetPercent = 0.22;
-        else neckOffsetPercent = 0.18; 
-      } else if (isFullSleeve) {
-        neckOffsetPercent = 0.18;
-      }
+      let neckOffsetPercent = 0.28; // Standardized high anchor for shirts/full sleeves
+      if (isTshirt && !garmentUrl.includes('fullsleeve')) neckOffsetPercent = 0.22;
       
       const neckOffset = shirtHeight * neckOffsetPercent;
       
