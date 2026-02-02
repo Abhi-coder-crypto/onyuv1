@@ -90,8 +90,11 @@ export default function PhotoTryOn() {
 
       // Advanced alignment based on multiple landmarks
       const posePoints = results.poseLandmarks;
+      const nose = posePoints[0];
       const leftShoulder = posePoints[11];
       const rightShoulder = posePoints[12];
+      const leftElbow = posePoints[13];
+      const rightElbow = posePoints[14];
       const leftHip = posePoints[23];
       const rightHip = posePoints[24];
       
@@ -99,47 +102,52 @@ export default function PhotoTryOn() {
       const midShoulderX = (leftShoulder.x + rightShoulder.x) / 2 * canvas.width;
       const midShoulderY = (leftShoulder.y + rightShoulder.y) / 2 * canvas.height;
       
-      // Use nose for vertical reference if available to avoid grey shirt visibility
-      const nose = posePoints[0];
-      const eyeLineY = (posePoints[1].y + posePoints[2].y) / 2 * canvas.height;
+      // Calculate neck point (approximated)
+      const neckY = (nose.y + (leftShoulder.y + rightShoulder.y) / 2) / 2 * canvas.height;
       
+      // Calculate torso length for height adjustment
+      const shoulderToHipDist = Math.sqrt(
+        Math.pow((leftHip.x - leftShoulder.x) * canvas.width, 2) + 
+        Math.pow((leftHip.y - leftShoulder.y) * canvas.height, 2)
+      );
+
       // Calculate angle from left to right shoulder
       const dx = (rightShoulder.x - leftShoulder.x) * canvas.width;
       const dy = (rightShoulder.y - leftShoulder.y) * canvas.height;
       
       let torsoAngle = Math.atan2(dy, dx);
-      
-      // Normalize angle
       if (torsoAngle > Math.PI / 2) torsoAngle -= Math.PI;
       if (torsoAngle < -Math.PI / 2) torsoAngle += Math.PI;
       
       const shoulderWidth = Math.sqrt(dx * dx + dy * dy);
 
       // Scaling factor: garment should be wider than shoulders to cover torso
-      // Standard shirt width is usually around 2.8-3.0x the shoulder-to-shoulder distance in 2D projection
-      const shirtWidth = shoulderWidth * 2.9; 
+      const shirtWidth = shoulderWidth * 2.85; 
       const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
 
-      // Positioning: Center on mid-shoulder and rotate with torso
+      // Perspective Warp (Simulated via scaling and skew if needed)
+      // For now, let's focus on high-fidelity positioning
+      
       ctx.save();
-      ctx.translate(midShoulderX, midShoulderY);
+      // Anchor to approximated neck point for neckline alignment
+      ctx.translate(midShoulderX, neckY);
       ctx.rotate(torsoAngle);
       
-      // Vertical offset to align neckline
-      // 0.26 moves the shirt higher to align the collar with the shoulder line
-      const verticalOffset = shirtHeight * 0.26; 
+      // Refined vertical offset to match neckline perfectly
+      const verticalOffset = shirtHeight * 0.08; 
       
-      // Draw image centered horizontally and adjusted vertically
-      ctx.globalAlpha = 0.98; // Subtle transparency for blending
-      ctx.drawImage(garmentImg, -shirtWidth / 2, -verticalOffset, shirtWidth, shirtHeight);
+      // Lighting and blending
+      ctx.globalAlpha = 0.97;
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = "rgba(0,0,0,0.2)";
       
-      // Add subtle multiply blend mode for shadows if possible
+      ctx.drawImage(garmentImg, -shirtWidth / 2, verticalOffset, shirtWidth, shirtHeight);
+      
+      // Multiply blend mode for natural shadows
       ctx.globalCompositeOperation = 'multiply';
-      ctx.globalAlpha = 0.1;
-      ctx.drawImage(garmentImg, -shirtWidth / 2, -verticalOffset, shirtWidth, shirtHeight);
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.globalAlpha = 1.0;
-
+      ctx.globalAlpha = 0.12;
+      ctx.drawImage(garmentImg, -shirtWidth / 2, verticalOffset, shirtWidth, shirtHeight);
+      
       ctx.restore();
       
       const dataUrl = canvas.toDataURL("image/png");
