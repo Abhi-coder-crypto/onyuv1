@@ -86,6 +86,7 @@ export default function PhotoTryOn() {
       // Draw the overlay
       canvas.width = userImg.width;
       canvas.height = userImg.height;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(userImg, 0, 0);
 
       // Advanced alignment based on multiple landmarks
@@ -159,21 +160,6 @@ export default function PhotoTryOn() {
       }
       
       const neckOffset = shirtHeight * neckOffsetPercent;
-      
-      // Lighting and professional blending
-      ctx.globalAlpha = 0.98;
-      ctx.shadowBlur = 12;
-      ctx.shadowColor = "rgba(0,0,0,0.2)";
-      
-      // Draw centered horizontally, anchored to neck/shoulder line vertically
-      ctx.drawImage(garmentImg, -shirtWidth / 2, -neckOffset, shirtWidth, shirtHeight);
-      
-      // Multiply blend mode for natural depth integration
-      ctx.globalCompositeOperation = 'multiply';
-      ctx.globalAlpha = 0.18;
-      ctx.drawImage(garmentImg, -shirtWidth / 2, -neckOffset, shirtWidth, shirtHeight);
-      
-      ctx.restore();
       
       // Lighting and professional blending
       ctx.globalAlpha = 0.98;
