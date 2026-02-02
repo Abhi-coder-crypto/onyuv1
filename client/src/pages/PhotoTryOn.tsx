@@ -102,15 +102,6 @@ export default function PhotoTryOn() {
       const midShoulderX = (leftShoulder.x + rightShoulder.x) / 2 * canvas.width;
       const midShoulderY = (leftShoulder.y + rightShoulder.y) / 2 * canvas.height;
       
-      // Calculate neck point (approximated)
-      const neckY = (nose.y + (leftShoulder.y + rightShoulder.y) / 2) / 2 * canvas.height;
-      
-      // Calculate torso length for height adjustment
-      const shoulderToHipDist = Math.sqrt(
-        Math.pow((leftHip.x - leftShoulder.x) * canvas.width, 2) + 
-        Math.pow((leftHip.y - leftShoulder.y) * canvas.height, 2)
-      );
-
       // Calculate angle from left to right shoulder
       const dx = (rightShoulder.x - leftShoulder.x) * canvas.width;
       const dy = (rightShoulder.y - leftShoulder.y) * canvas.height;
@@ -121,22 +112,26 @@ export default function PhotoTryOn() {
       
       const shoulderWidth = Math.sqrt(dx * dx + dy * dy);
 
-      // Scaling factor: garment should be wider than shoulders to cover torso
-      // Standard shirt width is usually around 2.8-3.0x the shoulder-to-shoulder distance in 2D projection
-      const shirtWidth = shoulderWidth * 3.1; 
+      // CRITICAL ADJUSTMENT: 
+      // 1. Scale width more aggressively to cover from shoulder tip to tip
+      // 2. Adjust multiplier based on garment type
+      const isHoodie = garmentUrl.includes('hoodie');
+      const widthMultiplier = isHoodie ? 3.4 : 3.2; 
+      
+      const shirtWidth = shoulderWidth * widthMultiplier; 
       const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
 
-      // Perspective Warp (Simulated via scaling and skew if needed)
-      // For now, let's focus on high-fidelity positioning
-      
       ctx.save();
-      // Anchor to mid-shoulder but move slightly up towards neck
-      ctx.translate(midShoulderX, midShoulderY - (shoulderWidth * 0.15));
+      // Anchor to mid-shoulder
+      ctx.translate(midShoulderX, midShoulderY);
       ctx.rotate(torsoAngle);
       
-      // Refined vertical offset to match neckline perfectly
-      // Higher value moves it down. 0.0 moves it to the anchor.
-      const verticalOffset = shirtHeight * 0.05; 
+      // VERTICAL ALIGNMENT:
+      // We want the top of the garment to start AT the shoulder line.
+      // Since we are drawing from the center of the garment (-shirtWidth/2, verticalOffset),
+      // we need to offset the drawing by a fraction of the shirtHeight to align the neck.
+      // 0.15 - 0.20 is usually the sweet spot to put the collar at the shoulder line.
+      const verticalOffset = -shirtHeight * 0.12; 
       
       // Lighting and blending
       ctx.globalAlpha = 0.98;
@@ -147,7 +142,7 @@ export default function PhotoTryOn() {
       
       // Multiply blend mode for natural shadows
       ctx.globalCompositeOperation = 'multiply';
-      ctx.globalAlpha = 0.12;
+      ctx.globalAlpha = 0.15;
       ctx.drawImage(garmentImg, -shirtWidth / 2, verticalOffset, shirtWidth, shirtHeight);
       
       ctx.restore();
