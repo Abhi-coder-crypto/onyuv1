@@ -116,8 +116,8 @@ export default function PhotoTryOn() {
       const shoulderWidth = Math.sqrt(dx * dx + dy * dy);
 
       // Scaling factor: garment should be wider than shoulders to cover torso
-      // Increased to 2.8 for better shoulder coverage
-      const shirtWidth = shoulderWidth * 2.8; 
+      // Standard shirt width is usually around 2.8-3.0x the shoulder-to-shoulder distance in 2D projection
+      const shirtWidth = shoulderWidth * 2.9; 
       const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
 
       // Positioning: Center on mid-shoulder and rotate with torso
@@ -126,12 +126,8 @@ export default function PhotoTryOn() {
       ctx.rotate(torsoAngle);
       
       // Vertical offset to align neckline
-      // Feedback Loop:
-      // 0.35: Too high (mouth)
-      // 0.23: Still high
-      // 0.15: Too low (grey shirt visible)
-      // 0.18 should be the "Goldilocks" value for this specific garment/pose.
-      const verticalOffset = shirtHeight * 0.22; 
+      // 0.26 moves the shirt higher to align the collar with the shoulder line
+      const verticalOffset = shirtHeight * 0.26; 
       
       // Draw image centered horizontally and adjusted vertically
       ctx.globalAlpha = 0.98; // Subtle transparency for blending
