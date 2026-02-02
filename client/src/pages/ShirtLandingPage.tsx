@@ -97,7 +97,7 @@ export default function ShirtLandingPage() {
             <Button variant="ghost" size="icon" className="hover-elevate">
               <SearchIcon className="w-5 h-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="hover-elevate">
+            <Button variant="ghost" size="icon" className="hover-elevate hidden lg:inline-flex">
               <User className="w-5 h-5" />
             </Button>
             <Button variant="ghost" size="icon" className="hover-elevate relative">
