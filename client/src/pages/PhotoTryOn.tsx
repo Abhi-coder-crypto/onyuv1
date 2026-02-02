@@ -125,11 +125,25 @@ export default function PhotoTryOn() {
       ctx.translate(midShoulderX, midShoulderY);
       ctx.rotate(torsoAngle);
       
-      // Dynamic vertical offset based on shoulder distance and garment type
-      // Higher offset (closer to 0) moves the shirt UP
+      // Vertical offset to align neckline
+      // Feedback Loop:
+      // 0.35: Too high (mouth)
+      // 0.23: Still high
+      // 0.15: Too low (grey shirt visible)
+      // 0.18 should be the "Goldilocks" value for this specific garment/pose.
       const verticalOffset = shirtHeight * 0.22; 
       
+      // Draw image centered horizontally and adjusted vertically
+      ctx.globalAlpha = 0.98; // Subtle transparency for blending
       ctx.drawImage(garmentImg, -shirtWidth / 2, -verticalOffset, shirtWidth, shirtHeight);
+      
+      // Add subtle multiply blend mode for shadows if possible
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.globalAlpha = 0.1;
+      ctx.drawImage(garmentImg, -shirtWidth / 2, -verticalOffset, shirtWidth, shirtHeight);
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 1.0;
+
       ctx.restore();
       
       const dataUrl = canvas.toDataURL("image/png");
