@@ -24,16 +24,10 @@ import shirtHalfRight from "@assets/Right_1768630945204.png";
 
 const HALF_SLEEVE_SHIRTS = [
   { id: 1, image: shirtHalfFront, name: "Half Sleeve Front", type: "half" },
-  { id: 2, image: shirtHalfBack, name: "Half Sleeve Back", type: "half" },
-  { id: 3, image: shirtHalfRight, name: "Half Sleeve Left", type: "half" },
-  { id: 4, image: shirtHalfLeft, name: "Half Sleeve Right", type: "half" },
 ];
 
 const FULL_SLEEVE_SHIRTS = [
   { id: 5, image: fullSleeveImg, name: "Full Sleeve Front", type: "full" },
-  { id: 6, image: fullSleeveBack, name: "Full Sleeve Back", type: "full" },
-  { id: 7, image: fullSleeveRight, name: "Full Sleeve Left", type: "full" },
-  { id: 8, image: fullSleeveLeft, name: "Full Sleeve Right", type: "full" },
 ];
 
 export default function ShirtLandingPage() {

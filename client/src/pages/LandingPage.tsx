@@ -22,16 +22,10 @@ import fullSleeveRightImg from "@assets/Right_1768630871760.png";
 
 const HALF_SLEEVE_TSHIRTS = [
   { id: 1, image: "/tshirt-front.png", name: "Half Sleeve Front", type: "standard" },
-  { id: 2, image: "/tshirt-back.png", name: "Half Sleeve Back", type: "standard" },
-  { id: 3, image: "/tshirt-left.png", name: "Half Sleeve Left", type: "standard" },
-  { id: 4, image: "/tshirt-right.png", name: "Half Sleeve Right", type: "standard" },
 ];
 
 const FULL_SLEEVE_TSHIRTS = [
   { id: 5, image: fullSleeveFrontImg, name: "Full Sleeve Front", type: "fullsleeve" },
-  { id: 6, image: fullSleeveBackImg, name: "Full Sleeve Back", type: "fullsleeve" },
-  { id: 7, image: fullSleeveRightImg, name: "Full Sleeve Left", type: "fullsleeve" },
-  { id: 8, image: fullSleeveLeftImg, name: "Full Sleeve Right", type: "fullsleeve" },
 ];
 
 export default function LandingPage() {
