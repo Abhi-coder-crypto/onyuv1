@@ -122,24 +122,26 @@ export default function PhotoTryOn() {
       const shoulderWidth = Math.sqrt(dx * dx + dy * dy);
 
       // Scaling factor: garment should be wider than shoulders to cover torso
-      const shirtWidth = shoulderWidth * 2.85; 
+      // Standard shirt width is usually around 2.8-3.0x the shoulder-to-shoulder distance in 2D projection
+      const shirtWidth = shoulderWidth * 3.1; 
       const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
 
       // Perspective Warp (Simulated via scaling and skew if needed)
       // For now, let's focus on high-fidelity positioning
       
       ctx.save();
-      // Anchor to approximated neck point for neckline alignment
-      ctx.translate(midShoulderX, neckY);
+      // Anchor to mid-shoulder but move slightly up towards neck
+      ctx.translate(midShoulderX, midShoulderY - (shoulderWidth * 0.15));
       ctx.rotate(torsoAngle);
       
       // Refined vertical offset to match neckline perfectly
-      const verticalOffset = shirtHeight * 0.08; 
+      // Higher value moves it down. 0.0 moves it to the anchor.
+      const verticalOffset = shirtHeight * 0.05; 
       
       // Lighting and blending
-      ctx.globalAlpha = 0.97;
-      ctx.shadowBlur = 15;
-      ctx.shadowColor = "rgba(0,0,0,0.2)";
+      ctx.globalAlpha = 0.98;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = "rgba(0,0,0,0.15)";
       
       ctx.drawImage(garmentImg, -shirtWidth / 2, verticalOffset, shirtWidth, shirtHeight);
       
