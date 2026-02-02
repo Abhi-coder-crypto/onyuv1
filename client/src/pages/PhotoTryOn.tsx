@@ -112,38 +112,38 @@ export default function PhotoTryOn() {
       
       const shoulderWidth = Math.sqrt(dx * dx + dy * dy);
 
-      // CRITICAL ADJUSTMENT: 
-      // 1. Scale width more aggressively to cover from shoulder tip to tip
-      // 2. Adjust multiplier based on garment type
+      // SCALE ADJUSTMENT:
+      // We need to account for the garment image's own margins.
+      // Standard shirt width multiplier for full shoulder-to-shoulder coverage.
       const isHoodie = garmentUrl.includes('hoodie');
-      const widthMultiplier = isHoodie ? 3.4 : 3.2; 
+      const widthMultiplier = isHoodie ? 3.6 : 3.4; 
       
       const shirtWidth = shoulderWidth * widthMultiplier; 
       const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
 
       ctx.save();
-      // Anchor to mid-shoulder
+      // Anchor precisely to the midpoint between shoulders
       ctx.translate(midShoulderX, midShoulderY);
       ctx.rotate(torsoAngle);
       
-      // VERTICAL ALIGNMENT:
-      // We want the top of the garment to start AT the shoulder line.
-      // Since we are drawing from the center of the garment (-shirtWidth/2, verticalOffset),
-      // we need to offset the drawing by a fraction of the shirtHeight to align the neck.
-      // 0.15 - 0.20 is usually the sweet spot to put the collar at the shoulder line.
-      const verticalOffset = -shirtHeight * 0.12; 
+      // VERTICAL REFINEMENT:
+      // The goal is to place the shirt's collar exactly on the neckline.
+      // Since (midShoulderX, midShoulderY) is the anchor, we offset the image
+      // such that the top of the shirt aligns with the shoulder line.
+      const neckOffset = shirtHeight * 0.15; // Adjustment to put neckline at anchor
       
-      // Lighting and blending
+      // Lighting and professional blending
       ctx.globalAlpha = 0.98;
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = "rgba(0,0,0,0.15)";
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = "rgba(0,0,0,0.2)";
       
-      ctx.drawImage(garmentImg, -shirtWidth / 2, verticalOffset, shirtWidth, shirtHeight);
+      // Draw centered horizontally, anchored to neck/shoulder line vertically
+      ctx.drawImage(garmentImg, -shirtWidth / 2, -neckOffset, shirtWidth, shirtHeight);
       
-      // Multiply blend mode for natural shadows
+      // Multiply blend mode for natural depth integration
       ctx.globalCompositeOperation = 'multiply';
-      ctx.globalAlpha = 0.15;
-      ctx.drawImage(garmentImg, -shirtWidth / 2, verticalOffset, shirtWidth, shirtHeight);
+      ctx.globalAlpha = 0.18;
+      ctx.drawImage(garmentImg, -shirtWidth / 2, -neckOffset, shirtWidth, shirtHeight);
       
       ctx.restore();
       
