@@ -31,6 +31,7 @@ const FULL_SLEEVE_SHIRTS = [
 ];
 
 export default function ShirtLandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(HALF_SLEEVE_SHIRTS[0]);
   const [detectedSize, setDetectedSize] = useState<string | null>(null);
   const [fitNote, setFitNote] = useState<string | null>(null);
@@ -41,7 +42,7 @@ export default function ShirtLandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-white text-black overflow-x-hidden">
       {/* Header */}
       <header className="border-b border-black/5 sticky top-0 z-50 bg-white/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between">
@@ -69,15 +70,29 @@ export default function ShirtLandingPage() {
           </nav>
 
           <div className="flex items-center space-x-4 lg:space-x-8 flex-shrink-0">
-            <div className="lg:hidden relative group">
-              <Button variant="ghost" size="icon" className="hover-elevate">
-                <ChevronDown className="w-5 h-5" />
+            <div className="lg:hidden relative">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="hover-elevate"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${mobileMenuOpen ? 'rotate-180' : ''}`} />
               </Button>
-              <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-black/5 shadow-2xl rounded-2xl py-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-[100]">
-                <Link href="/shirts" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">Shirts</Link>
-                <Link href="/" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">T-Shirts</Link>
-                <Link href="/hoodies" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">Hoodies</Link>
-              </div>
+              <AnimatePresence>
+                {mobileMenuOpen && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full right-0 mt-2 w-48 bg-white border border-black/5 shadow-2xl rounded-2xl py-4 z-[100]"
+                  >
+                    <Link href="/shirts" onClick={() => setMobileMenuOpen(false)} className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">Shirts</Link>
+                    <Link href="/" onClick={() => setMobileMenuOpen(false)} className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">T-Shirts</Link>
+                    <Link href="/hoodies" onClick={() => setMobileMenuOpen(false)} className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">Hoodies</Link>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             <Button variant="ghost" size="icon" className="hover-elevate">
               <SearchIcon className="w-5 h-5" />
