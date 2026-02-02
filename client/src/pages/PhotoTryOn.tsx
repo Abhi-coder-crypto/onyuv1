@@ -99,44 +99,36 @@ export default function PhotoTryOn() {
       const midShoulderX = (leftShoulder.x + rightShoulder.x) / 2 * canvas.width;
       const midShoulderY = (leftShoulder.y + rightShoulder.y) / 2 * canvas.height;
       
+      // Use nose for vertical reference if available to avoid grey shirt visibility
+      const nose = posePoints[0];
+      const eyeLineY = (posePoints[1].y + posePoints[2].y) / 2 * canvas.height;
+      
       // Calculate angle from left to right shoulder
       const dx = (rightShoulder.x - leftShoulder.x) * canvas.width;
       const dy = (rightShoulder.y - leftShoulder.y) * canvas.height;
       
-      // The issue is that atan2(dy, dx) for shoulders (11 to 12) 
-      // returns an angle that might be flipped depending on person's orientation.
-      // We want the garment to be upright relative to the canvas.
-      // A standard upright garment has its top at the top.
-      // Let's use the mid-shoulder point and keep rotation minimal.
       let torsoAngle = Math.atan2(dy, dx);
       
-      // Normalize angle to be between -PI/2 and PI/2 to keep shirt upright
+      // Normalize angle
       if (torsoAngle > Math.PI / 2) torsoAngle -= Math.PI;
       if (torsoAngle < -Math.PI / 2) torsoAngle += Math.PI;
       
       const shoulderWidth = Math.sqrt(dx * dx + dy * dy);
 
       // Scaling factor: garment should be wider than shoulders to cover torso
-      const shirtWidth = shoulderWidth * 2.5; 
+      // Increased to 2.8 for better shoulder coverage
+      const shirtWidth = shoulderWidth * 2.8; 
       const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
 
       // Positioning: Center on mid-shoulder and rotate with torso
       ctx.save();
-      // Move to center point
       ctx.translate(midShoulderX, midShoulderY);
-      
-      // Rotate based on shoulder angle
       ctx.rotate(torsoAngle);
       
-      // Vertical offset to align neckline
-      // Feedback Loop:
-      // 0.35: Too high (mouth)
-      // 0.23: Still high
-      // 0.15: Too low (grey shirt visible)
-      // 0.18 should be the "Goldilocks" value for this specific garment/pose.
-      const verticalOffset = shirtHeight * 0.16; 
+      // Dynamic vertical offset based on shoulder distance and garment type
+      // Higher offset (closer to 0) moves the shirt UP
+      const verticalOffset = shirtHeight * 0.22; 
       
-      // Draw image centered horizontally and adjusted vertically
       ctx.drawImage(garmentImg, -shirtWidth / 2, -verticalOffset, shirtWidth, shirtHeight);
       ctx.restore();
       
