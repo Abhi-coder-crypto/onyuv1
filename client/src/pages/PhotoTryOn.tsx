@@ -117,7 +117,7 @@ export default function PhotoTryOn() {
       const shoulderWidth = Math.sqrt(dx * dx + dy * dy);
 
       // Scaling factor: garment should be wider than shoulders to cover torso
-      const shirtWidth = shoulderWidth * 2.3; 
+      const shirtWidth = shoulderWidth * 2.5; 
       const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
 
       // Positioning: Center on mid-shoulder and rotate with torso
@@ -134,7 +134,7 @@ export default function PhotoTryOn() {
       // 0.23: Still high
       // 0.15: Too low (grey shirt visible)
       // 0.18 should be the "Goldilocks" value for this specific garment/pose.
-      const verticalOffset = shirtHeight * 0.12; 
+      const verticalOffset = shirtHeight * 0.16; 
       
       // Draw image centered horizontally and adjusted vertically
       ctx.drawImage(garmentImg, -shirtWidth / 2, -verticalOffset, shirtWidth, shirtHeight);
