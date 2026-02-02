@@ -101,6 +101,17 @@ export default function PhotoTryOn() {
       // Calculate torso center and rotation
       const midShoulderX = (leftShoulder.x + rightShoulder.x) / 2 * canvas.width;
       const midShoulderY = (leftShoulder.y + rightShoulder.y) / 2 * canvas.height;
+
+      // Calculate torso height for scaling (shoulder to hip)
+      const leftShoulderToHip = Math.sqrt(
+        Math.pow((leftHip.x - leftShoulder.x) * canvas.width, 2) +
+        Math.pow((leftHip.y - leftShoulder.y) * canvas.height, 2)
+      );
+      const rightShoulderToHip = Math.sqrt(
+        Math.pow((rightHip.x - rightShoulder.x) * canvas.width, 2) +
+        Math.pow((rightHip.y - rightShoulder.y) * canvas.height, 2)
+      );
+      const torsoHeight = (leftShoulderToHip + rightShoulderToHip) / 2;
       
       // Calculate angle from left to right shoulder
       const dx = (rightShoulder.x - leftShoulder.x) * canvas.width;
@@ -113,18 +124,25 @@ export default function PhotoTryOn() {
       const shoulderWidth = Math.sqrt(dx * dx + dy * dy);
 
       // SCALE ADJUSTMENT:
-      // We need to account for the garment image's own margins.
       const isHoodie = garmentUrl.includes('hoodie');
       const isFullSleeve = garmentUrl.includes('fullsleeve') || garmentUrl.includes('Shirt');
       const isTshirt = garmentUrl.includes('tshirt') || garmentUrl.includes('front');
       
-      let widthMultiplier = 3.0; // Default base
+      let widthMultiplier = 3.1;
       if (isHoodie) widthMultiplier = 3.6;
       else if (isFullSleeve) widthMultiplier = 3.1;
-      else if (isTshirt) widthMultiplier = 3.1; // Reduced from 3.4/3.2 to fix oversized look
       
       const shirtWidth = shoulderWidth * widthMultiplier; 
-      const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
+      const shirtHeightRaw = shirtWidth * (garmentImg.height / garmentImg.width);
+
+      // DYNAMIC HEIGHT SCALING:
+      // Ensure the shirt height matches the person's torso height (shoulder to hip)
+      // Usually a shirt should cover about 1.1x to 1.3x the shoulder-to-hip distance
+      const targetHeight = torsoHeight * 1.6; 
+      const heightScaleFactor = targetHeight / shirtHeightRaw;
+      
+      // We apply a blended scaling to keep it natural but respect the torso
+      const shirtHeight = shirtHeightRaw * (0.4 + (heightScaleFactor * 0.6));
 
       ctx.save();
       // Anchor precisely to the midpoint between shoulders
@@ -132,16 +150,30 @@ export default function PhotoTryOn() {
       ctx.rotate(torsoAngle);
       
       // VERTICAL REFINEMENT:
-      // The goal is to place the shirt's collar exactly on the neckline.
       let neckOffsetPercent = 0.15;
       if (isTshirt) {
-        if (isFullSleeve) neckOffsetPercent = 0.22; // Push Full Sleeve T-shirts UP more
+        if (isFullSleeve) neckOffsetPercent = 0.22;
         else neckOffsetPercent = 0.18; 
       } else if (isFullSleeve) {
         neckOffsetPercent = 0.18;
       }
       
       const neckOffset = shirtHeight * neckOffsetPercent;
+      
+      // Lighting and professional blending
+      ctx.globalAlpha = 0.98;
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = "rgba(0,0,0,0.2)";
+      
+      // Draw centered horizontally, anchored to neck/shoulder line vertically
+      ctx.drawImage(garmentImg, -shirtWidth / 2, -neckOffset, shirtWidth, shirtHeight);
+      
+      // Multiply blend mode for natural depth integration
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.globalAlpha = 0.18;
+      ctx.drawImage(garmentImg, -shirtWidth / 2, -neckOffset, shirtWidth, shirtHeight);
+      
+      ctx.restore();
       
       // Lighting and professional blending
       ctx.globalAlpha = 0.98;
