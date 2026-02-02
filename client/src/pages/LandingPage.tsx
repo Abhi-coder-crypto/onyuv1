@@ -68,7 +68,17 @@ export default function LandingPage() {
             </div>
           </nav>
 
-          <div className="flex items-center space-x-8 flex-shrink-0">
+          <div className="flex items-center space-x-4 lg:space-x-8 flex-shrink-0">
+            <div className="lg:hidden relative group">
+              <Button variant="ghost" size="icon" className="hover-elevate">
+                <ChevronDown className="w-5 h-5" />
+              </Button>
+              <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-black/5 shadow-2xl rounded-2xl py-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-[100]">
+                <Link href="/shirts" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">Shirts</Link>
+                <Link href="/" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">T-Shirts</Link>
+                <Link href="/hoodies" className="block px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors text-black">Hoodies</Link>
+              </div>
+            </div>
             <Button variant="ghost" size="icon" className="hover-elevate">
               <SearchIcon className="w-5 h-5" />
             </Button>
