@@ -114,9 +114,14 @@ export default function PhotoTryOn() {
 
       // SCALE ADJUSTMENT:
       // We need to account for the garment image's own margins.
-      // Standard shirt width multiplier for full shoulder-to-shoulder coverage.
       const isHoodie = garmentUrl.includes('hoodie');
-      const widthMultiplier = isHoodie ? 3.6 : 3.4; 
+      const isFullSleeve = garmentUrl.includes('fullsleeve') || garmentUrl.includes('Shirt');
+      
+      // Full sleeves/Shirts need slightly less width than t-shirts to not look oversized
+      // T-shirts need more to cover shoulders
+      let widthMultiplier = 3.4;
+      if (isHoodie) widthMultiplier = 3.6;
+      else if (isFullSleeve) widthMultiplier = 3.1; // Reduced from 3.4 to fix "too big" issue
       
       const shirtWidth = shoulderWidth * widthMultiplier; 
       const shirtHeight = shirtWidth * (garmentImg.height / garmentImg.width);
@@ -128,9 +133,13 @@ export default function PhotoTryOn() {
       
       // VERTICAL REFINEMENT:
       // The goal is to place the shirt's collar exactly on the neckline.
-      // Since (midShoulderX, midShoulderY) is the anchor, we offset the image
-      // such that the top of the shirt aligns with the shoulder line.
-      const neckOffset = shirtHeight * 0.15; // Adjustment to put neckline at anchor
+      // half-sleeves/t-shirts need to go UP (more negative offset)
+      // full-sleeves/shirts were looking too low
+      let neckOffsetPercent = 0.15;
+      if (!isFullSleeve && !isHoodie) neckOffsetPercent = 0.22; // Push T-shirts UP more
+      else if (isFullSleeve) neckOffsetPercent = 0.18; // Push Shirts UP slightly more than before
+      
+      const neckOffset = shirtHeight * neckOffsetPercent;
       
       // Lighting and professional blending
       ctx.globalAlpha = 0.98;
